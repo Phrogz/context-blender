@@ -61,7 +61,6 @@ if (window.CanvasRenderingContext2D){
 					sA = src[px+3]/255;
 					dA = dst[px+3]/255;
 					dst[px+3] = (sA + dA*(1-sA))*255;
-					dA /= 255;
 					dst[px  ] = src[px  ]*sA*dst[px  ]*dA;
 					dst[px+1] = src[px+1]*sA+dst[px+1]*dA;
 					dst[px+2] = src[px+2]*sA+dst[px+2]*dA;
@@ -72,7 +71,6 @@ if (window.CanvasRenderingContext2D){
 					sA = src[px+3]/255;
 					dA = dst[px+3]/255;
 					dst[px+3] = (sA + dA*(1-sA))*255;
-					dA /= 255;
 					dst[px  ] = (src[px  ]>dst[px  ]) ? (src[px  ]-dst[px  ]) : (dst[px  ]-src[px  ]);
 					dst[px+1] = (src[px+1]>dst[px+1]) ? (src[px+1]-dst[px+1]) : (dst[px+1]-src[px+1]);
 					dst[px+2] = (src[px+2]>dst[px+2]) ? (src[px+2]-dst[px+2]) : (dst[px+2]-src[px+2]);
