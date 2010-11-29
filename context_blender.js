@@ -16,6 +16,9 @@ if (window.CanvasRenderingContext2D){
 		}
 		if (offsets.width =='auto') offsets.width =this.canvas.width;
 		if (offsets.height=='auto') offsets.height=this.canvas.height;
+		offsets.width  = Math.min(offsets.width, this.canvas.width-offsets.sourceX, destContext.canvas.width-offsets.destX );
+		offsets.height = Math.min(offsets.height,this.canvas.height-offsets.sourceY,destContext.canvas.height-offsets.destY);
+
 		var srcD = this.getImageData(offsets.sourceX,offsets.sourceY,offsets.width,offsets.height);
 		var dstD = destContext.getImageData(offsets.destX,offsets.destY,offsets.width,offsets.height);
 		var src  = srcD.data;
