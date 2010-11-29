@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>Blend Testbed</title>
+	<style type="text/css" media="screen">
+		body { text-align:center; color:white; font-family:sans-serif; font-size:85%; }
+		img, canvas { border:1px solid #000; ; vertical-align:middle}
+		#content span { display:inline-block }
+		#content span canvas { display:block }
+		#output { color:white; font-size:9pt; font-family:monospace;}
+		#args * { vertical-align:middle;}
+		#args span { display:inline-block;}
+		#args select { display:block}
+		dl { width:20em; margin:1em auto;}
+		dt { float:left; clear:left; width:10em; text-align:right; padding-right:0.6em; font-weight:bold;}
+		dd { display:block; margin-left:10em; text-align:left; }
+	</style>
+   <script language="javascript" type="text/javascript" src="public/js/jquery.js"></script>
+   <script language="javascript" type="text/javascript" src="public/js/context_blender.js"></script>
+<script type="text/javascript">
+var size,in1,in2,reftx,outtx,offtx;
+window.onload=function(){
+	window.onload = null;
+	size = { width:$('#img1').width(), height:$('#img1').height() };
+
+	$.each([1,2],function(i,s){
+		var ctx = $('<canvas>').attr(size)[0].getContext('2d');
+		drawImage(ctx,'img'+s);
+		window['in'+s] = ctx.getImageData(0,0,size.width,size.height).data;
+	});
+
+	$.each(['ref','out'],function(i,s){
+		window[s+'tx'] = $('#'+s).attr(size)[0].getContext('2d');
+	});
+
+	offtx = $('<canvas>').attr(size)[0].getContext('2d');
+	$('#mode').change(blend);
+	blend();
+};
+
+function drawImage(ctx,imgOrId){
+	if (typeof imgOrId == 'string'){
+		ctx.drawImage($('#'+imgOrId)[0],0,0);
+	}else{
+		ctx.drawImage(imgOrId,0,0);
+	}
+}
+function blend(){
+	var mode = $('#mode').val();
+	var ref = new Image;
+	ref.onload=function(){
+		$(reftx.canvas).attr(size);
+		$(outtx.canvas).attr(size);
+		$(offtx.canvas).attr(size);
+		drawImage(reftx,ref);
+		drawImage(outtx,'img1');
+		drawImage(offtx,'img2');
+		offtx.blendOnto(outtx,mode);
+		calculateStatistics(mode);
+	};
+	ref.src = "multi_"+mode+".png";
+}
+
+function pad(n){
+	if      (n<10)  return "&nbsp;&nbsp;"+n;
+	else if (n<100) return "&nbsp;"+n;
+	else return n;
+}
+
+function c(pxl){
+	return '{r:'+pad(pxl.r)+' g:'+pad(pxl.g)+' b:'+pad(pxl.b)+' a:'+pad(pxl.a)+'}';
+}
+
+function px(a,i){
+	return {r:a[i],g:a[i+1],b:a[i+2],a:a[i+3]};
+}
+
+function calculateStatistics(mode){
+	var ref = reftx.getImageData(0,0,size.width,size.height).data;
+	var out = outtx.getImageData(0,0,size.width,size.height).data;
+	var error=0,errors=[];
+	for (var y=0;y<size.height;++y){
+		for (var x=0;x<size.width;++x){
+			var p  = y*size.width+x;
+			var op = px(out,p);
+			var rp = px(ref,p);
+			var diff = Math.abs(op.r-rp.r) + Math.abs(op.g-rp.g) + Math.abs(op.b-rp.b) + Math.abs(op.a-rp.a);
+			if (diff!=0){
+				errors.push({in1:px(in1,p),in2:px(in2,p),out:op,ref:rp,diff:diff});
+				error += diff*diff;
+			}
+		}
+	}
+	error = Math.sqrt(error/(size.width*size.height));
+	errors.sort(function(a,b){a=a.diff;b=b.diff;return a<b?1:a>b?-1:0});
+	$('#total').html(size.width*size.height);
+	$('#wrong').html(errors.length + " ("+(100*errors.length/(size.width*size.height)).toFixed(0)+"%)");
+	$('#stddev').html(error.toFixed(3));
+	
+	setTimeout(function(){
+		$('#output').html(errors.slice(0,200).map(function(e){
+			return pad(e.diff)+": "+c(e.in2)+" "+mode+" "+c(e.in1)+" = "+c(e.out)+"; should be "+c(e.ref);
+		}).join("<br>"));
+	},50);
+};
+</script>
+</head><body style="background:#000">
+	<p id="args">
+		<img id="img1" src="multi1.png">
+		<span>
+		<select id="mode">
+			<option>normal</option>
+			<option>multiply</option>
+			<option selected>screen</option>
+			<option>overlay</option>
+			<option>dodge</option>
+			<option>add</option>
+			<option>difference</option>
+		</select> blend over</span>
+		<img id="img2" src="multi2.png">
+	</p>
+	<p id="content">
+		<span>yields<canvas id="out"></canvas></span>
+		<span>should be<canvas id="ref"></canvas></span>
+	</p>
+	<dl>
+		<dt>Total Pixels:</dt><dd id="total"></dd>
+		<dt>Wrong Pixels:</dt><dd id="wrong"></dd>
+		<dt>Std Deviation:</dt><dd id="stddev"></dd>
+	</dl>
+	<div id="output">
+	</div>
+</body></html>
