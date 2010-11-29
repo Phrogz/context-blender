@@ -41,9 +41,10 @@ if (window.CanvasRenderingContext2D){
 					sA = src[px+3]/255;
 					dA = dst[px+3]/255;
 					dst[px+3] = (sA + dA*(1-sA))*255;
-					dst[px  ] = Math.ceil((1 - (1-sA*src[px  ]/255)*(1-dA*dst[px  ]/255))*255);
-					dst[px+1] = Math.ceil((1 - (1-sA*src[px+1]/255)*(1-dA*dst[px+1]/255))*255);
-					dst[px+2] = Math.ceil((1 - (1-sA*src[px+2]/255)*(1-dA*dst[px+2]/255))*255);
+					sA /= 255; dA /= 255;
+					dst[px  ] = Math.ceil((1 - (1-sA*src[px  ])*(1-dA*dst[px  ]) )*255);
+					dst[px+1] = Math.ceil((1 - (1-sA*src[px+1])*(1-dA*dst[px+1]) )*255);
+					dst[px+2] = Math.ceil((1 - (1-sA*src[px+2])*(1-dA*dst[px+2]) )*255);
 				}
 			break;
 			case 'add':
