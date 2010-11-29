@@ -50,14 +50,20 @@ function blend(){
 	var mode = $('#mode').val();
 	var ref = new Image;
 	ref.onload=function(){
-		$(reftx.canvas).attr(size);
-		$(outtx.canvas).attr(size);
-		$(offtx.canvas).attr(size);
-		drawImage(reftx,ref);
-		drawImage(outtx,'img1');
-		drawImage(offtx,'img2');
-		offtx.blendOnto(outtx,mode);
-		calculateStatistics(mode);
+		var iterations = 100;
+		var totalTime  = 0;
+		for (var i=0;i<iterations;++i){
+			$(reftx.canvas).attr(size);
+			$(outtx.canvas).attr(size);
+			$(offtx.canvas).attr(size);
+			drawImage(reftx,ref);
+			drawImage(outtx,'img1');
+			drawImage(offtx,'img2');
+			var t = new Date;
+			offtx.blendOnto(outtx,mode);
+			totalTime += (new Date) - t;
+		}
+		calculateStatistics(mode,iterations,totalTime);
 	};
 	ref.src = "multi_"+mode+".png";
 }
@@ -76,7 +82,7 @@ function px(a,i){
 	return {r:a[i],g:a[i+1],b:a[i+2],a:a[i+3]};
 }
 
-function calculateStatistics(mode){
+function calculateStatistics(mode,iterations,totalTime){
 	var ref = reftx.getImageData(0,0,size.width,size.height).data;
 	var out = outtx.getImageData(0,0,size.width,size.height).data;
 	var error=0,errors=[];
@@ -97,6 +103,7 @@ function calculateStatistics(mode){
 	$('#total').html(size.width*size.height);
 	$('#wrong').html(errors.length + " ("+(100*errors.length/(size.width*size.height)).toFixed(0)+"%)");
 	$('#stddev').html(error.toFixed(3));
+	$('#perf').html((iterations/(totalTime/1000)).toFixed(1)+'fps');
 	
 	setTimeout(function(){
 		$('#output').html(errors.slice(0,200).map(function(e){
@@ -128,6 +135,7 @@ function calculateStatistics(mode){
 		<dt>Total Pixels:</dt><dd id="total"></dd>
 		<dt>Wrong Pixels:</dt><dd id="wrong"></dd>
 		<dt>Std Deviation:</dt><dd id="stddev"></dd>
+		<dt>Performance:</dt><dd id="perf"></dd>
 	</dl>
 	<div id="output">
 	</div>
