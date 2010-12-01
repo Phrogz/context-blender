@@ -91,7 +91,11 @@ function calculateStatistics(mode,iterations,totalTime){
 			var p  = y*size.width+x;
 			var op = px(out,p);
 			var rp = px(ref,p);
-			var diff = Math.abs(op.r-rp.r) + Math.abs(op.g-rp.g) + Math.abs(op.b-rp.b) + Math.abs(op.a-rp.a);
+			var diff=0;
+			var diffs = [Math.abs(op.r-rp.r), Math.abs(op.g-rp.g), Math.abs(op.b-rp.b), Math.abs(op.a-rp.a)];
+			for (var i=0;i<4;++i){
+				if (diffs[i]>3) diff+=diffs[i];
+			}
 			if (diff!=0){
 				errors.push({in1:px(in1,p),in2:px(in2,p),out:op,ref:rp,diff:diff});
 				error += diff*diff;
