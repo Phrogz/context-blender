@@ -8,7 +8,7 @@
 		img, canvas { border:1px solid #000; ; vertical-align:middle}
 		#content span { display:inline-block }
 		#content span canvas { display:block }
-		#output { color:white; font-size:9pt; font-family:monospace;}
+		#output { color:white; font-size:9pt; font-family:monospace; white-space:pre;}
 		#args * { vertical-align:middle;}
 		#args span { display:inline-block;}
 		#args select { display:block}
@@ -17,24 +17,24 @@
 		dd { display:block; margin-left:10em; text-align:left; }
 	</style>
    <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-   <script language="javascript" type="text/javascript" src="../context_blender.js"></script>
+   <script language="javascript" type="text/javascript" src="../context_blender.js?sx"></script>
 <script type="text/javascript">
-var size,in1,in2,reftx,outtx,offtx;
+var data = {}, contexts = {};
+var size;
 window.onload=function(){
 	window.onload = null;
-	size = { width:$('#img1').width(), height:$('#img1').height() };
+	size = { width:$('#over').width(), height:$('#over').height() };
 
-	$.each([1,2],function(i,s){
-		var ctx = $('<canvas>').attr(size)[0].getContext('2d');
-		drawImage(ctx,'img'+s);
-		window['in'+s] = ctx.getImageData(0,0,size.width,size.height).data;
+	$.each(['over','under'],function(i,s){
+		var ctx = contexts[s] = $('<canvas>').attr(size)[0].getContext('2d');
+		drawImage(ctx,s);
+		data[s] = ctx.getImageData(0,0,size.width,size.height).data;
 	});
 
 	$.each(['ref','out'],function(i,s){
-		window[s+'tx'] = $('#'+s).attr(size)[0].getContext('2d');
+		contexts[s] = $('#'+s).attr(size)[0].getContext('2d');
 	});
 
-	offtx = $('<canvas>').attr(size)[0].getContext('2d');
 	$('#mode').change(blend);
 	blend();
 };
@@ -50,17 +50,15 @@ function blend(){
 	var mode = $('#mode').val();
 	var ref = new Image;
 	ref.onload=function(){
-		var iterations = 100;
+		var iterations = 50;
 		var totalTime  = 0;
+		$(contexts.ref.canvas).attr(size);
+		drawImage(contexts.ref,ref);
 		for (var i=0;i<iterations;++i){
-			$(reftx.canvas).attr(size);
-			$(outtx.canvas).attr(size);
-			$(offtx.canvas).attr(size);
-			drawImage(reftx,ref);
-			drawImage(outtx,'img1');
-			drawImage(offtx,'img2');
+			$(contexts.out.canvas).attr(size);
+			drawImage(contexts.out,'under');
 			var t = new Date;
-			offtx.blendOnto(outtx,mode);
+			contexts.over.blendOnto(contexts.out,mode);
 			totalTime += (new Date) - t;
 		}
 		calculateStatistics(mode,iterations,totalTime);
@@ -68,38 +66,40 @@ function blend(){
 	ref.src = "multi_"+mode+".png";
 }
 
-function pad(n){
-	if      (n<10)  return "&nbsp;&nbsp;"+n;
-	else if (n<100) return "&nbsp;"+n;
-	else return n;
+function pad(n,digits,padRight){
+	if (!digits) digits = 2;
+	var s = "";
+	while (digits) if (n < Math.pow(10,digits--)) s += " ";
+	return padRight ? n+s : s+n;
 }
 
 function c(pxl){
 	return '{r:'+pad(pxl.r)+' g:'+pad(pxl.g)+' b:'+pad(pxl.b)+' a:'+pad(pxl.a)+'}';
 }
 
-function px(a,i){
+function pxl(a,i){
 	return {r:a[i],g:a[i+1],b:a[i+2],a:a[i+3]};
 }
 
 function calculateStatistics(mode,iterations,totalTime){
-	var ref = reftx.getImageData(0,0,size.width,size.height).data;
-	var out = outtx.getImageData(0,0,size.width,size.height).data;
+	var ref = contexts.ref.getImageData(0,0,size.width,size.height).data;
+	var out = contexts.out.getImageData(0,0,size.width,size.height).data;
 	var error=0,errors=[];
+	var px = 0;
 	for (var y=0;y<size.height;++y){
 		for (var x=0;x<size.width;++x){
-			var p  = y*size.width+x;
-			var op = px(out,p);
-			var rp = px(ref,p);
+			var op = pxl(out,px);
+			var rp = pxl(ref,px);
 			var diff=0;
 			var diffs = [Math.abs(op.r-rp.r), Math.abs(op.g-rp.g), Math.abs(op.b-rp.b), Math.abs(op.a-rp.a)];
 			for (var i=0;i<4;++i){
 				if (diffs[i]>3) diff+=diffs[i];
 			}
 			if (diff!=0){
-				errors.push({in1:px(in1,p),in2:px(in2,p),out:op,ref:rp,diff:diff});
+				errors.push({px:px,over:pxl(data.over,px),under:pxl(data.under,px),out:op,ref:rp,diff:diff});
 				error += diff*diff;
 			}
+			px += 4;
 		}
 	}
 	error = Math.sqrt(error/(size.width*size.height));
@@ -111,25 +111,26 @@ function calculateStatistics(mode,iterations,totalTime){
 	
 	setTimeout(function(){
 		$('#output').html(errors.slice(0,200).map(function(e){
-			return pad(e.diff)+": "+c(e.in2)+" "+mode+" "+c(e.in1)+" = "+c(e.out)+"; should be "+c(e.ref);
+			return pad(e.px,5,true)+" :: "+pad(e.diff)+": "+c(e.over)+" "+mode+" "+c(e.under)+" = "+c(e.out)+"; should be "+c(e.ref);
 		}).join("<br>"));
 	},50);
 };
 </script>
 </head><body style="background:#000">
 	<p id="args">
-		<img id="img1" src="multi1.png">
+		<img id="over" src="over.png">
 		<span>
 		<select id="mode">
 			<option>normal</option>
 			<option>multiply</option>
 			<option selected>screen</option>
+			<option>src-in</option>
 			<option>overlay</option>
 			<option>dodge</option>
 			<option>add</option>
 			<option>difference</option>
 		</select> blend over</span>
-		<img id="img2" src="multi2.png">
+		<img id="under" src="under.png">
 	</p>
 	<p id="content">
 		<span>yields<canvas id="out"></canvas></span>
