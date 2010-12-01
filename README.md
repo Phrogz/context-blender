@@ -22,6 +22,7 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
           Width and height may less than specified if there is not enough space
           on the over or under contexts to fit the blend.
 
+
 ## Use
 
 		// Likely an 'offscreen' (not in the DOM) canvas
@@ -39,14 +40,30 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
     // Blend a 16x16 tile from 'over' onto 'under' (again), starting at 17,42 in 'under'
     over.blendOnto(under,'add',{destX:17,destY:42,sourceX:32,sourceY:128,width:16,height:16});
 
+
 ## Supported Blend Modes
 
- * `normal` - Copy over onto under, respecting the alpha of both
+The following blend modes work perfectly (or as nearly as the [vagaries of the HTML Canvas](http://stackoverflow.com/questions/4309364/why-does-html-canvas-getimagedata-not-return-the-exact-same-values-that-were-ju) allow):
+
+ * `normal` (or `src-over`)
  * `screen` 
- * `add`
  * `multiply`
  * `difference`
- * _more to come_
+
+These blend modes mostly work as intended:
+
+ * `src-in` - the output of this blend mode is slightly different from the effect
+   of applying the transparency of one layer as a mask to another; the difference only appears
+   in low-opacity areas, however.
+ * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
+   on the opacities of the two layers. I have not yet figured out what it does instead.
+   For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
+
+These blend modes are known to be broken:
+
+ * `overlay`
+ * `colordodge` (or `dodge`)
+
 
 ## Requirements/Browser Support
 
