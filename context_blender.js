@@ -24,6 +24,7 @@ if (window.CanvasRenderingContext2D){
 		var src  = srcD.data;
 		var dst  = dstD.data;
 		var sA, dA, len=dst.length;
+		var sRA, sGA, sBA, dRA, dGA, dBA, dA2;
 		
 		switch(blendMode){
 			case 'normal':
@@ -31,20 +32,29 @@ if (window.CanvasRenderingContext2D){
 					sA = src[px+3]/255;
 					dA = dst[px+3]/255;
 					dst[px+3] = (sA+dA)*255;
-					dst[px  ] = dst[px  ] + (src[px  ] - dst[px  ])*dA;
-					dst[px+1] = dst[px+1] + (src[px+1] - dst[px+1])*dA;
-					dst[px+2] = dst[px+2] + (src[px+2] - dst[px+2])*dA;
+					dst[px  ] = (1 - sA)*dst[px  ] + src[px  ];
+					dst[px+1] = (1 - sA)*dst[px+1] + src[px+1];
+					dst[px+2] = (1 - sA)*dst[px+2] + src[px+2];
 				}
 			break;
 			case 'screen':
 				for (var px=0;px<len;px+=4){
-					sA = src[px+3]/255;
-					dA = dst[px+3]/255;
-					dst[px+3] = (sA + dA*(1-sA))*255;
+					sA  = src[px+3]/255;
+					dA  = dst[px+3]/255;
+					dA2 = (sA + dA - sA*dA);
+					dst[px+3] = dA2*255;
+
 					sA /= 255; dA /= 255;
-					dst[px  ] = Math.ceil((1 - (1-sA*src[px  ])*(1-dA*dst[px  ]) )*255);
-					dst[px+1] = Math.ceil((1 - (1-sA*src[px+1])*(1-dA*dst[px+1]) )*255);
-					dst[px+2] = Math.ceil((1 - (1-sA*src[px+2])*(1-dA*dst[px+2]) )*255);
+					sRA = src[px  ]*sA;
+					dRA = dst[px  ]*dA;
+					sGA = src[px+1]*sA;
+					dGA = dst[px+1]*dA;
+					sBA = src[px+2]*sA;
+					dBA = dst[px+2]*dA;
+					
+					dst[px  ] = 255 * (sRA + dRA - sRA*dRA ) / dA2;
+					dst[px+1] = 255 * (sGA + dGA - sGA*dGA ) / dA2;
+					dst[px+2] = 255 * (sBA + dBA - sBA*dBA ) / dA2;
 				}
 			break;
 			case 'add':
@@ -61,7 +71,7 @@ if (window.CanvasRenderingContext2D){
 				for (var px=0;px<len;px+=4){
 					sA = src[px+3]/255;
 					dA = dst[px+3]/255;
-					dst[px+3] = (sA + dA*(1-sA))*255;
+					dst[px+3] = (sA+dA-sA*dA)*255;
 					dst[px  ] = src[px  ]*sA*dst[px  ]*dA;
 					dst[px+1] = src[px+1]*sA+dst[px+1]*dA;
 					dst[px+2] = src[px+2]*sA+dst[px+2]*dA;
