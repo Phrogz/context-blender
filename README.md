@@ -25,7 +25,7 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 
 ## Use
 
-		// Likely an 'offscreen' (not in the DOM) canvas
+    // Likely an 'offscreen' (not in the DOM) canvas
     var over = someCanvas.getContext('2d'); 
     
     // Usually a canvas that is shown on the page
