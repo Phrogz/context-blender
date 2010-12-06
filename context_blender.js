@@ -1,4 +1,4 @@
-if (window.CanvasRenderingContext2D){
+if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getImageData){
 	var defaultOffsets = {
 		destX   : 0,
 		destY   : 0,
@@ -122,4 +122,8 @@ if (window.CanvasRenderingContext2D){
 		}
 		destContext.putImageData(dstD,offsets.destX,offsets.destY);
 	};
+	// For querying of functionality from other libraries
+	var modes = CanvasRenderingContext2D.prototype.blendOnto.supportedBlendModes = 'normal src-over screen multiply difference src-in plus add'.split(' ');
+	var supports = CanvasRenderingContext2D.prototype.blendOnto.supports = {};
+	for (var i=0,len=modes.length;i<len;++i) supports[modes[i]] = true;
 }
