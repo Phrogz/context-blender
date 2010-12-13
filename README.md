@@ -55,15 +55,21 @@ These blend modes mostly work as intended:
  * `src-in` - the output of this blend mode is slightly different from the effect
    of applying the transparency of one layer as a mask to another; the difference only appears
    in low-opacity areas, however.
+     * ![comparison of result versus intended for src-in blend mode](http://phrogz.net/tmp/context-blender_src-in.png)
+
  * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
    on the opacities of the two layers. I have not yet figured out what it does instead.
    For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
+   * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_add.png)
+
  * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha
    of either/both images, the more the colors get high contrast.
+   * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_overlay.png)
 
 These blend modes are known to be broken:
 
  * `colordodge` (or `dodge`)
+     * ![comparison of result versus intended for dodge blend mode](http://phrogz.net/tmp/context-blender_dodge.png)
 
 ## Requirements/Browser Support
 
