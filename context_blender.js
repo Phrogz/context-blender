@@ -91,13 +91,29 @@ if (window.CanvasRenderingContext2D){
 					dst[px+2] = Math.min(sBA + dBA,1) * demultiply;
 				break;
 
-				// ******* BROKEN
 				case 'overlay':
-					dst[px  ] = ((2*dRA<dA) ? (2*sRA*dRA + sRA*(1-dA) + dRA*(1-sA)) : (sRA*dRA - 2*(dA-dRA)*(sA-sRA) + sRA*(1-dA) + dRA*(1-sA)) ) * demultiply;
-					dst[px+1] = ((2*dGA<dA) ? (2*sGA*dGA + sGA*(1-dA) + dGA*(1-sA)) : (sGA*dGA - 2*(dA-dGA)*(sA-sGA) + sGA*(1-dA) + dGA*(1-sA)) ) * demultiply;
-					dst[px+2] = ((2*dBA<dA) ? (2*sBA*dBA + sBA*(1-dA) + dBA*(1-sA)) : (sBA*dBA - 2*(dA-dBA)*(sA-sBA) + sBA*(1-dA) + dBA*(1-sA)) ) * demultiply;
+					// Correct for 100% opacity case; colors get clipped as opacity falls
+					dst[px  ] = (dRA<=0.5) ? (2*src[px  ]*dRA/dA) : 255 - (2 - 2*dRA/dA) * (255-src[px  ]);
+					dst[px+1] = (dGA<=0.5) ? (2*src[px+1]*dGA/dA) : 255 - (2 - 2*dGA/dA) * (255-src[px+1]);
+					dst[px+2] = (dBA<=0.5) ? (2*src[px+2]*dBA/dA) : 255 - (2 - 2*dBA/dA) * (255-src[px+2]);
+
+					// http://dunnbypaul.net/blends/
+					// dst[px  ] = ( (dRA<=0.5) ? (2*sRA*dRA) : 1 - (1 - 2*(dRA-0.5)) * (1-sRA) ) * demultiply;
+					// dst[px+1] = ( (dGA<=0.5) ? (2*sGA*dGA) : 1 - (1 - 2*(dGA-0.5)) * (1-sGA) ) * demultiply;
+					// dst[px+2] = ( (dBA<=0.5) ? (2*sBA*dBA) : 1 - (1 - 2*(dBA-0.5)) * (1-sBA) ) * demultiply;
+
+					// http://www.barbato.us/2010/12/01/blimageblending-emulating-photoshops-blending-modes-opencv/#toc-blendoverlay
+					// dst[px  ] = ( (sRA<=0.5) ? (sRA*dRA + sRA*(1-dA) + dRA*(1-sA)) : (sRA + dRA - sRA*dRA) ) * demultiply;
+					// dst[px+1] = ( (sGA<=0.5) ? (sGA*dGA + sGA*(1-dA) + dGA*(1-sA)) : (sGA + dGA - sGA*dGA) ) * demultiply;
+					// dst[px+2] = ( (sBA<=0.5) ? (sBA*dBA + sBA*(1-dA) + dBA*(1-sA)) : (sBA + dBA - sBA*dBA) ) * demultiply;
+
+					// http://www.nathanm.com/photoshop-blending-math/
+					// dst[px  ] = ( (sRA < 0.5) ? (2 * dRA * sRA) : (1 - 2 * (1 - sRA) * (1 - dRA)) ) * demultiply;
+					// dst[px+1] = ( (sGA < 0.5) ? (2 * dGA * sGA) : (1 - 2 * (1 - sGA) * (1 - dGA)) ) * demultiply;
+					// dst[px+2] = ( (sBA < 0.5) ? (2 * dBA * sBA) : (1 - 2 * (1 - sBA) * (1 - dBA)) ) * demultiply;
 				break;
 
+				// ******* BROKEN
 				case 'colordodge':
 				case 'dodge':
 					if (src[px  ]==255 && dRA==0) dst[px  ] = sRA*(1-dA) * demultiply;
@@ -122,4 +138,8 @@ if (window.CanvasRenderingContext2D){
 		}
 		destContext.putImageData(dstD,offsets.destX,offsets.destY);
 	};
+	// For other libraries to ask if a blend mode is supported
+	var modes  = CanvasRenderingContext2D.prototype.blendOnto.supportedModes = 'normal src-over screen multiply difference src-in plus add'.split(' ');
+	var lookup = CanvasRenderingContext2D.prototype.blendOnto.supports = {};
+	for (var i=0,len=modes.length;i<len;++i) lookup[modes[i]] = true;
 }

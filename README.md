@@ -58,17 +58,17 @@ These blend modes mostly work as intended:
  * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
    on the opacities of the two layers. I have not yet figured out what it does instead.
    For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
+ * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha
+   of either/both images, the more the colors get high contrast.
 
 These blend modes are known to be broken:
 
- * `overlay`
  * `colordodge` (or `dodge`)
-
 
 ## Requirements/Browser Support
 
-Only tested on Safari v5.0 and Chrome. Should work on any user agent that supplies a `CanvasRenderingContext2D`
-along with `getImageData` and `putImageData`.
+Tested on Safari v5.0, Chrome v8, and FF v3.6. Should work on any user agent that supplies a
+`CanvasRenderingContext2D` along with `getImageData` and `putImageData`.
 
 
 ## About
