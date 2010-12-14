@@ -50,7 +50,7 @@ The following blend modes work perfectly (or as nearly as the [vagaries of the H
  * `multiply`
  * `difference`
 
-These blend modes mostly work as intended:
+These blend modes mostly work as intended, but have issues when it comes to dealing with the alpha channel:
 
  * `src-in` - the output of this blend mode is slightly different from the effect
    of applying the transparency of one layer as a mask to another; the difference only appears
@@ -66,20 +66,33 @@ These blend modes mostly work as intended:
    of either/both images, the more the colors get high contrast.
    * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_overlay.png)
 
-These blend modes are known to be broken:
+ * `hardlight` - this is the opposite of "overlay" and same caveats apply
 
  * `colordodge` (or `dodge`)
      * ![comparison of result versus intended for dodge blend mode](http://phrogz.net/tmp/context-blender_dodge.png)
+
+ * `colorburn` (or `burn`)
+
+ * `darken`
+
+ * `lighten`
+
+ * `exclusion`
 
 ## Requirements/Browser Support
 
 Tested on Safari v5.0, Chrome v8, and FF v3.6. Should work on any user agent that supplies a
 `CanvasRenderingContext2D` along with `getImageData` and `putImageData`.
 
-
 ## About
 
 This library was created around the need solely for a one-off 'screen' blend mode to match the company-mandated style for bar graphs used internally, previously only available via a Microsoft® Excel® template. Clearly this functionality is useful in more contexts than just my one-off, so I decided to make a framework around it and encourage others to help figure out the formulae. Please, fork this project, add blend modes and/or fix math, and send me pull requests! I feel certain that the resources must exist out there on the equations Photoshop uses in the presence of alpha, but so far I have not found them.
+
+## Reference Material
+[PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF  
+[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
+[Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post  
+[Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post  
 
 ### License
 

@@ -68,8 +68,8 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 					dst[px+1] = (sGA + dGA - 2 * Math.min( sGA*dA, dGA*sA )) * demultiply;
 					dst[px+2] = (sBA + dBA - 2 * Math.min( sBA*dA, dBA*sA )) * demultiply;
 				break;
-				
-				// ******* Slightly different from Photoshop
+
+				// ******* Slightly different from Photoshop, where alpha is concerned
 				case 'src-in':
 					// Only differs from Photoshop in low-opacity areas
 					dA2 = sA*dA;
@@ -113,20 +113,53 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 					// dst[px+2] = ( (sBA < 0.5) ? (2 * dBA * sBA) : (1 - 2 * (1 - sBA) * (1 - dBA)) ) * demultiply;
 				break;
 
-				// ******* BROKEN
+				case 'hardlight':
+					// opposite of overlay, same caveats apply as to how well it works
+					dst[px  ] = (sRA<=0.5) ? (2*dst[px  ]*sRA/dA) : 255 - (2 - 2*sRA/sA) * (255-dst[px  ]);
+					dst[px+1] = (sGA<=0.5) ? (2*dst[px+1]*sGA/dA) : 255 - (2 - 2*sGA/sA) * (255-dst[px+1]);
+					dst[px+2] = (sBA<=0.5) ? (2*dst[px+2]*sBA/dA) : 255 - (2 - 2*sBA/sA) * (255-dst[px+2]);
+				break;
+				
 				case 'colordodge':
 				case 'dodge':
-					if (src[px  ]==255 && dRA==0) dst[px  ] = sRA*(1-dA) * demultiply;
-					else if (src[px  ]==255)      dst[px  ] = (sA*dA + sRA*(1-dA) + dRA*(1-sA)) * demultiply;           
-					else if (sRA<sA)              dst[px  ] = Math.min( sA*dA, dRA*sA/(sA*dA - sRA*dA)) * demultiply;
+					if ( src[px  ] == 255 && dRA==0) dst[px  ] = 255;
+					else dst[px  ] = Math.min(255, dst[px  ]/(255 - src[px  ])) * demultiply;
 
-					if (src[px+1]==255 && dGA==0) dst[px+1] = sGA*(1-dA) * demultiply;
-					else if (src[px+1]==255)      dst[px+1] = (sA*dA + sGA*(1-dA) + dGA*(1-sA)) * demultiply;           
-					else if (sGA<sA)              dst[px+1] = Math.min( sA*dA, dGA*sA/(sA*dA - sGA*dA)) * demultiply;
+					if ( src[px+1] == 255 && dGA==0) dst[px+1] = 255;
+					else dst[px+1] = Math.min(255, dst[px+1]/(255 - src[px+1])) * demultiply;
 
-					if (src[px+2]==255 && dBA==0) dst[px+2] = sBA*(1-dA) * demultiply;
-					else if (src[px+2]==255)      dst[px+2] = (sA*dA + sBA*(1-dA) + dBA*(1-sA)) * demultiply;           
-					else if (sBA<sA)              dst[px+2] = Math.min( sA*dA, dBA*sA/(sA*dA - sBA*dA)) * demultiply;
+					if ( src[px+2] == 255 && dBA==0) dst[px+2] = 255;
+					else dst[px+2] = Math.min(255, dst[px+2]/(255 - src[px+2])) * demultiply;
+				break;
+				
+				case 'colorburn':
+				case 'burn':
+					if ( src[px  ] == 0 && dRA==0) dst[px  ] = 0;
+					else dst[px  ] = (1 - Math.min(1, (1 - dRA)/sRA)) * demultiply;
+
+					if ( src[px+1] == 0 && dGA==0) dst[px+1] = 0;
+					else dst[px+1] = (1 - Math.min(1, (1 - dGA)/sGA)) * demultiply;
+
+					if ( src[px+2] == 0 && dBA==0) dst[px+2] = 0;
+					else dst[px+2] = (1 - Math.min(1, (1 - dBA)/sBA)) * demultiply;
+				break;
+				
+				case 'darken':
+					dst[px  ] = Math.min( sRA, dRA*dA) * demultiply;
+					dst[px+1] = Math.min( sGA, dGA*dA) * demultiply;
+					dst[px+2] = Math.min( sBA, dBA*dA) * demultiply;
+				break;
+				
+				case 'lighten':
+					dst[px  ] = Math.max( sRA, dRA*dA) * demultiply;
+					dst[px+1] = Math.max( sGA, dGA*dA) * demultiply;
+					dst[px+2] = Math.max( sBA, dBA*dA) * demultiply;
+				break;
+
+				case 'exclusion':
+					dst[px  ] = (dRA+sRA - 2*dRA*sRA) * demultiply;
+					dst[px+1] = (dGA+sGA - 2*dGA*sGA) * demultiply;
+					dst[px+2] = (dBA+sBA - 2*dBA*sBA) * demultiply;
 				break;
 
 				// ******* UNSUPPORTED
@@ -139,7 +172,7 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 		destContext.putImageData(dstD,offsets.destX,offsets.destY);
 	};
 	// For querying of functionality from other libraries
-	var modes = CanvasRenderingContext2D.prototype.blendOnto.supportedBlendModes = 'normal src-over screen multiply difference src-in plus add'.split(' ');
+	var modes = CanvasRenderingContext2D.prototype.blendOnto.supportedBlendModes = 'normal src-over screen multiply difference src-in plus add overlay hardlight colordodge dodge colorburn burn darken lighten exclusion'.split(' ');
 	var supports = CanvasRenderingContext2D.prototype.blendOnto.supports = {};
 	for (var i=0,len=modes.length;i<len;++i) supports[modes[i]] = true;
 }
