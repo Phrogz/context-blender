@@ -11,7 +11,7 @@
 		#output { color:white; font-size:9pt; font-family:monospace; white-space:pre;}
 		#args * { vertical-align:middle;}
 		#args span { display:inline-block;}
-		#args select { display:block}
+		#args select { display:block; width: auto;}
 		dl { width:20em; margin:1em auto;}
 		dt { float:left; clear:left; width:10em; text-align:right; padding-right:0.6em; font-weight:bold;}
 		dd { display:block; margin-left:10em; text-align:left; }
@@ -21,10 +21,23 @@
 <script type="text/javascript">
 var data = {}, contexts = {};
 var size;
-window.onload=function(){
-	window.onload = null;
+window.onload=init;
+
+function init() {
+	$('#mode').change(blend);
+	$('#source').change(change);
+	change();
+}
+
+function change(){
+	$('#under').attr('src', 'under'+ $('#source').attr('value') +'.png');
+	$('#over').attr('src', 'over'+ $('#source').attr('value') +'.png');
+
 	size = { width:$('#over').width(), height:$('#over').height() };
 
+	ctx = {};
+	contexts = {};
+	data = {};
 	$.each(['over','under'],function(i,s){
 		var ctx = contexts[s] = $('<canvas>').attr(size)[0].getContext('2d');
 		drawImage(ctx,s);
@@ -35,7 +48,6 @@ window.onload=function(){
 		contexts[s] = $('#'+s).attr(size)[0].getContext('2d');
 	});
 
-	$('#mode').change(blend);
 	blend();
 };
 
@@ -63,7 +75,7 @@ function blend(){
 		}
 		calculateStatistics(mode,iterations,totalTime);
 	};
-	ref.src = "multi_"+mode+".png";
+	ref.src = "multi"+$('#source').attr('value')+"_"+mode+".png";
 }
 
 function pad(n,digits,padRight){
@@ -118,19 +130,34 @@ function calculateStatistics(mode,iterations,totalTime){
 </script>
 </head><body style="background:#000">
 	<p id="args">
-		<img id="over" src="over.png">
+		<span>
+		<select id="source">
+			<option value="0" selected>original</option>
+			<option value="1">new alpha</option>
+			<option value="2">new solid</option>
+		</select> images</span>
+		<img id="over" src="over0.png">
 		<span>
 		<select id="mode">
-			<option>normal</option>
-			<option>multiply</option>
-			<option selected>screen</option>
-			<option>src-in</option>
-			<option>overlay</option>
-			<option>dodge</option>
-			<option>add</option>
-			<option>difference</option>
+			<optgroup label="correct">
+				<option>normal</option>
+				<option>screen</option>
+				<option>multiply</option>
+				<option>difference</option>
+			</optgroup>
+			<optgroup label="problematic with opacity">
+				<option>src-in</option>
+				<option>add</option>
+				<option selected>overlay</option>
+				<option>hardlight</option>
+				<option>colordodge</option>
+				<option>colorburn</option>
+				<option>darken</option>
+				<option>lighten</option>
+				<option>exclusion</option>
+			</optgroup>
 		</select> blend over</span>
-		<img id="under" src="under.png">
+		<img id="under" src="under0.png">
 	</p>
 	<p id="content">
 		<span>yields<canvas id="out"></canvas></span>
