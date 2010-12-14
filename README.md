@@ -90,7 +90,7 @@ This library was created around the need solely for a one-off 'screen' blend mod
 
 ## Reference Material
 [PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF  
-[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
+[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)  
 [Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post  
 [Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post  
 
