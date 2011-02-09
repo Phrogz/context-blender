@@ -142,19 +142,7 @@ function calculateStatistics(mode,iterations,totalTime){
 </head><body>
 	<p id="args">
 		<span>
-		<span>Page Background:
-		<select id="bg">
-			<option class="dark" value="black" selected>Black</option>
-			<option class="dark" value="25">25% Grey</option>
-			<option class="dark" value="50" selected>50% Grey</option>
-			<option class="lite" value="75">75% Grey</option>
-			<option class="lite" value="white">White</option>
-			<option class="lite" value="grey-check-med">Grey Checkered</option>
-			<option class="lite" value="pink-check-med">Pink Checkered</option>
-			<option class="dark" value="red">Red</option>
-			<option class="lite" value="green">Green</option>
-			<option class="dark" value="blue">Blue</option>
-		</select></span><br />
+<br />
 		<span>Image set:
 		<select id="source">
 			<option value="0" selected>RGA variations</option>
@@ -167,23 +155,36 @@ function calculateStatistics(mode,iterations,totalTime){
 		<select id="mode">
 			<optgroup label="Working Correctly">
 				<option>normal</option>
-				<option>screen</option>
+				<option selected>screen</option>
 				<option>multiply</option>
 				<option>difference</option>
 			</optgroup>
 			<optgroup label="Troubles w/ Transparency">
 				<option>src-in</option>
+				<option>exclusion</option>
 				<option>add</option>
-				<option selected>overlay</option>
+				<option>lighten</option>
+				<option>darken</option>
+				<option>overlay</option>
 				<option>hardlight</option>
 				<option>colordodge</option>
 				<option>colorburn</option>
-				<option>darken</option>
-				<option>lighten</option>
-				<option>exclusion</option>
 			</optgroup>
 		</select> blend over</span>
 		<img id="under" src="under0.png">
+		<span>Page Background:
+		<select id="bg">
+			<option class="dark" value="black" selected>Black</option>
+			<option class="dark" value="25">25% Grey</option>
+			<option class="dark" value="50" selected>50% Grey</option>
+			<option class="lite" value="75">75% Grey</option>
+			<option class="lite" value="white">White</option>
+			<option class="lite" value="grey-check-med">Grey Checkered</option>
+			<option class="lite" value="pink-check-med">Pink Checkered</option>
+			<option class="dark" value="red">Red</option>
+			<option class="lite" value="green">Green</option>
+			<option class="dark" value="blue">Blue</option>
+		</select></span>
 	</p>
 	<p id="content">
 		<span>yields<canvas id="out"></canvas></span>
