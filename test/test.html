@@ -1,14 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <title>Blend Testbed</title>
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Blend Testbed</title>
 	<style type="text/css" media="screen">
-		body { text-align:center; color:white; font-family:sans-serif; font-size:85%; }
+		body { text-align:center; font-family:sans-serif; font-size:85%; }
+		body.dark { color:#fff }
+		body.lite { color:#000 }
 		img, canvas { border:1px solid #000; ; vertical-align:middle}
 		#content span { display:inline-block }
 		#content span canvas { display:block }
-		#output { color:white; font-size:9pt; font-family:monospace; white-space:pre;}
+		#output { font-size:9pt; font-family:monospace; white-space:pre;}
 		#args * { vertical-align:middle;}
 		#args span { display:inline-block;}
 		#args select { display:block; width: auto;}
@@ -16,26 +17,34 @@
 		dt { float:left; clear:left; width:10em; text-align:right; padding-right:0.6em; font-weight:bold;}
 		dd { display:block; margin-left:10em; text-align:left; }
 	</style>
-   <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-   <script language="javascript" type="text/javascript" src="../context_blender.js?sx"></script>
+	<script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+	<script language="javascript" type="text/javascript" src="../context_blender.js"></script>
 <script type="text/javascript">
 var data = {}, contexts = {};
 var size;
 window.onload=init;
 
 function init() {
+	$('#bg').change(updateBG);
 	$('#mode').change(blend);
-	$('#source').change(change);
-	change();
+	$('#source').change(changeSources);
+	updateBG();
+	changeSources();
 }
 
-function change(){
-	$('#under').attr('src', 'under'+ $('#source').attr('value') +'.png');
-	$('#over').attr('src', 'over'+ $('#source').attr('value') +'.png');
+function updateBG(){
+	var bg = $('#bg');
+	document.body.style.backgroundImage = "url(bg-"+bg.val()+".png)";
+	document.body.className = bg.find('option:selected').attr('class');
+	console.log(document.body.className);
+}
+
+function changeSources(){
+	$('#under').attr('src', 'under'+ $('#source').val() +'.png');
+	$('#over' ).attr('src', 'over' + $('#source').val() +'.png');
 
 	size = { width:$('#over').width(), height:$('#over').height() };
 
-	ctx = {};
 	contexts = {};
 	data = {};
 	$.each(['over','under'],function(i,s){
@@ -65,6 +74,8 @@ function blend(){
 		var iterations = 50;
 		var totalTime  = 0;
 		$(contexts.ref.canvas).attr(size);
+		// Since Safari sometimes does not fully clear a resized canvas
+		contexts.ref.clearRect(0,0,contexts.ref.canvas.width,contexts.ref.canvas.height);
 		drawImage(contexts.ref,ref);
 		for (var i=0;i<iterations;++i){
 			$(contexts.out.canvas).attr(size);
@@ -128,24 +139,39 @@ function calculateStatistics(mode,iterations,totalTime){
 	},50);
 };
 </script>
-</head><body style="background:#000">
+</head><body>
 	<p id="args">
 		<span>
+		<span>Page Background:
+		<select id="bg">
+			<option class="dark" value="black" selected>Black</option>
+			<option class="dark" value="25">25% Grey</option>
+			<option class="dark" value="50" selected>50% Grey</option>
+			<option class="lite" value="75">75% Grey</option>
+			<option class="lite" value="white">White</option>
+			<option class="lite" value="grey-check-med">Grey Checkered</option>
+			<option class="lite" value="pink-check-med">Pink Checkered</option>
+			<option class="dark" value="red">Red</option>
+			<option class="lite" value="green">Green</option>
+			<option class="dark" value="blue">Blue</option>
+		</select></span><br />
+		<span>Image set:
 		<select id="source">
-			<option value="0" selected>original</option>
-			<option value="1">new alpha</option>
-			<option value="2">new solid</option>
-		</select> images</span>
+			<option value="0" selected>RGA variations</option>
+			<option value="2">Rainbow Bubbles (solid)</option>
+			<option value="1">Rainbow Bubbles (80%)</option>
+		</select></span>
+		</span>
 		<img id="over" src="over0.png">
 		<span>
 		<select id="mode">
-			<optgroup label="correct">
+			<optgroup label="Working Correctly">
 				<option>normal</option>
 				<option>screen</option>
 				<option>multiply</option>
 				<option>difference</option>
 			</optgroup>
-			<optgroup label="problematic with opacity">
+			<optgroup label="Troubles w/ Transparency">
 				<option>src-in</option>
 				<option>add</option>
 				<option selected>overlay</option>
