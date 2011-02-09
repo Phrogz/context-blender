@@ -114,7 +114,6 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 				break;
 
 				case 'hardlight':
-					// opposite of overlay, same caveats apply as to how well it works
 					dst[px  ] = (sRA<=0.5) ? (2*dst[px  ]*sRA/dA) : 255 - (2 - 2*sRA/sA) * (255-dst[px  ]);
 					dst[px+1] = (sGA<=0.5) ? (2*dst[px+1]*sGA/dA) : 255 - (2 - 2*sGA/sA) * (255-dst[px+1]);
 					dst[px+2] = (sBA<=0.5) ? (2*dst[px+2]*sBA/dA) : 255 - (2 - 2*sBA/sA) * (255-dst[px+2]);
@@ -145,15 +144,15 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 				break;
 				
 				case 'darken':
-					dst[px  ] = Math.min( sRA, dRA*dA) * demultiply;
-					dst[px+1] = Math.min( sGA, dGA*dA) * demultiply;
-					dst[px+2] = Math.min( sBA, dBA*dA) * demultiply;
+					dst[px  ] = Math.min(sRA,dRA) * demultiply;
+					dst[px+1] = Math.min(sGA,dGA) * demultiply;
+					dst[px+2] = Math.min(sBA,dBA) * demultiply;
 				break;
 				
 				case 'lighten':
-					dst[px  ] = Math.max( sRA, dRA*dA) * demultiply;
-					dst[px+1] = Math.max( sGA, dGA*dA) * demultiply;
-					dst[px+2] = Math.max( sBA, dBA*dA) * demultiply;
+					dst[px  ] = Math.max(sRA,dRA) * demultiply;
+					dst[px+1] = Math.max(sGA,dGA) * demultiply;
+					dst[px+2] = Math.max(sBA,dBA) * demultiply;
 				break;
 
 				case 'exclusion':
