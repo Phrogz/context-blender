@@ -64,23 +64,23 @@ These blend modes mostly work as intended, but have issues when it comes to deal
    For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
    * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_add.png)
 
- * `lighten`
+ * `lighten` (or `lighter`) - the result is _slightly_ too dark when the opacity falls and incorrectly 'favors' a higher-opacity source.
      * ![comparison of result versus intended for lighten blend mode](http://phrogz.net/tmp/context-blender_lighten.png)
 
- * `darken`
+ * `darken` (or `darker`) - the result is too dark when combining low-opacity regions, and does not properly 'favor' the higher-opacity source.
      * ![comparison of result versus intended for darken blend mode](http://phrogz.net/tmp/context-blender_darken.png)
 
  * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha
-   of either/both images, the more the colors get high contrast.
+   of either/both images, the more the colors get clamped, resulting in high contrast.
    * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_overlay.png)
 
- * `hardlight` - this is the opposite of "overlay" and same caveats apply
+ * `hardlight` - this is the opposite of "overlay" and experiences similar problems when either image is not fully opaque.
    * ![comparison of result versus intended for hard light blend mode](http://phrogz.net/tmp/context-blender_hardlight.png)
 
- * `colordodge` (or `dodge`)
+ * `colordodge` (or `dodge`) - works correctly only under 100% opacity
      * ![comparison of result versus intended for dodge blend mode](http://phrogz.net/tmp/context-blender_dodge.png)
 
- * `colorburn` (or `burn`)
+ * `colorburn` (or `burn`) - works correctly only under 100% opacity
      * ![comparison of result versus intended for burn blend mode](http://phrogz.net/tmp/context-blender_burn.png)
 
 ## Requirements/Browser Support
