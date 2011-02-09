@@ -144,15 +144,17 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 				break;
 				
 				case 'darken':
-					dst[px  ] = Math.min(sRA,dRA) * demultiply;
-					dst[px+1] = Math.min(sGA,dGA) * demultiply;
-					dst[px+2] = Math.min(sBA,dBA) * demultiply;
+				case 'darker':
+					dst[px  ] = (sRA>dRA ? dRA : sRA) * demultiply;
+					dst[px+1] = (sGA>dGA ? dGA : sGA) * demultiply;
+					dst[px+2] = (sBA>dBA ? dBA : sBA) * demultiply;
 				break;
 				
 				case 'lighten':
-					dst[px  ] = Math.max(sRA,dRA) * demultiply;
-					dst[px+1] = Math.max(sGA,dGA) * demultiply;
-					dst[px+2] = Math.max(sBA,dBA) * demultiply;
+				case 'lighter':
+					dst[px  ] = (sRA<dRA ? dRA : sRA) * demultiply;
+					dst[px+1] = (sGA<dGA ? dGA : sGA) * demultiply;
+					dst[px+2] = (sBA<dBA ? dBA : sBA) * demultiply;
 				break;
 
 				case 'exclusion':
