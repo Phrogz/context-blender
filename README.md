@@ -52,6 +52,8 @@ The following blend modes work perfectly (or as nearly as the [vagaries of the H
 
 These blend modes mostly work as intended, but have issues when it comes to dealing with the alpha channel:
 
+ * `exclusion` - very subtle color differences (slightly too bright) under limited circumstances.
+
  * `src-in` - the output of this blend mode is slightly different from the effect
    of applying the transparency of one layer as a mask to another; the difference only appears
    in low-opacity areas, however.
@@ -62,22 +64,24 @@ These blend modes mostly work as intended, but have issues when it comes to deal
    For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
    * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_add.png)
 
+ * `lighten`
+     * ![comparison of result versus intended for lighten blend mode](http://phrogz.net/tmp/context-blender_lighten.png)
+
+ * `darken`
+     * ![comparison of result versus intended for darken blend mode](http://phrogz.net/tmp/context-blender_darken.png)
+
  * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha
    of either/both images, the more the colors get high contrast.
    * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_overlay.png)
 
  * `hardlight` - this is the opposite of "overlay" and same caveats apply
+   * ![comparison of result versus intended for hard light blend mode](http://phrogz.net/tmp/context-blender_hardlight.png)
 
  * `colordodge` (or `dodge`)
      * ![comparison of result versus intended for dodge blend mode](http://phrogz.net/tmp/context-blender_dodge.png)
 
  * `colorburn` (or `burn`)
-
- * `darken`
-
- * `lighten`
-
- * `exclusion`
+     * ![comparison of result versus intended for burn blend mode](http://phrogz.net/tmp/context-blender_burn.png)
 
 ## Requirements/Browser Support
 
