@@ -1,0 +1,13 @@
+Mode: normal      Time: 1.00  Delta:   817705
+Mode: screen      Time: 1.00  Delta:   842371
+Mode: multiply    Time: 1.14  Delta:   883147
+Mode: difference  Time: 1.26  Delta:   949969
+Mode: src-in      Time: 1.08  Delta:  4689117
+Mode: add         Time: 1.27  Delta:   825776
+Mode: overlay     Time: 1.11  Delta:  2074844
+Mode: hardlight   Time: 1.13  Delta:  3059525
+Mode: colordodge  Time: 1.33  Delta:  3220876
+Mode: colorburn   Time: 1.27  Delta:  5645315
+Mode: darken      Time: 1.12  Delta:  4172126
+Mode: lighten     Time: 1.08  Delta:  1279800
+Mode: exclusion   Time: 0.27  Delta:    39295
