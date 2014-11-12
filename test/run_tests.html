@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8">
+	<title>Context Blender Test</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../context_blender.js"></script>
+	<script type="text/javascript">
+		var ctx = {};
+		var testLoops = 5;
+
+		Object.defineProperty(Array.prototype,'sum',{value:function(){ for (var sum=0,i=this.length;i--;) sum+=this[i]; return sum }});
+
+		$(window).load(function(){
+			[].forEach.call(document.querySelectorAll('img'),function(img){
+				var id = img.id;
+				var canvas = document.createElement('canvas');
+				canvas.width = canvas.height = 140;
+				ctx[id] = canvas.getContext('2d');
+				ctx[id].drawImage(img,0,0);
+			});
+
+			var canvas = document.createElement('canvas');
+			canvas.width = canvas.height = 140;
+			ctx.actual = canvas.getContext('2d');
+			var blendOnto = CanvasRenderingContext2D.prototype.blendOnto;
+
+			$.each(blendOnto.supportedBlendModes,function(){
+				var mode = this+"";
+				if (blendOnto.aliases[mode]) return;
+				var section = $("<section>",{id:mode}).appendTo(document.body);
+				var actual = $("<canvas>",{class:'actual'}).appendTo(section)[0];
+				actual.width = actual.height = 140;
+				actual = actual.getContext('2d');
+
+				var ideal = $("<canvas>",{class:'ideal'}).appendTo(section)[0];
+				ideal.width = ideal.height = 140;
+				ideal = ideal.getContext('2d');
+				var img = new Image;
+				img.onload = function(){
+					ideal.drawImage(img,0,0);
+					var result = analyze(actual,ideal,mode);
+					showResult(result,section);
+				};
+				img.src = mode+'-ideal.png';
+			});
+		});
+
+		function analyze(actual,ideal,mode){
+			for (var time=0,i=testLoops;i--;){
+				actual.clearRect(0,0,140,140);
+				actual.drawImage(ctx.under.canvas,0,0);
+				var start = new Date;
+				ctx.over.blendOnto(actual,mode);
+				time += new Date-start;
+			}
+			var idata = ideal.getImageData(0,0,140,140).data;
+			var adata = actual.getImageData(0,0,140,140).data;
+
+			for (var deltas=[],i=0;i<adata.length;i+=4) deltas[i] = distance(pxl(idata,i),pxl(adata,i));
+			var wrongs  = deltas.filter(function(n){ return n>3 });
+			var percent = 100 * wrongs.length / Math.pow(140,2);
+			return { mode:mode, time:time/testLoops, percentBad:percent, deviation:wrongs.sum() };
+		}
+
+		function showResult(result,section){
+			var t = $("<table><caption>"+result.mode+"</caption></table>").appendTo(section);
+			t.append('<tr><th>Accuracy</th><td>'+Math.round(100-result.percentBad)+'%</td></tr>');
+			t.append('<tr><th>Deviation</th><td>'+Math.round(result.deviation)+'</td></tr>');
+			t.append('<tr><th>Time</th><td>'+result.time.toFixed(1)+'ms</td></tr>');
+		}
+
+		function distance(ideal,actual){
+			return Math.sqrt( Math.pow(ideal.r-actual.r,2) + Math.pow(ideal.g-actual.g,2), Math.pow(ideal.b-actual.b,2), Math.pow(ideal.a-actual.a,2) ) * (ideal.a/255);
+		}
+
+		function pxl(imgdata,i){
+			return {r:imgdata[i],g:imgdata[i+1],b:imgdata[i+2],a:imgdata[i+3]};
+		}
+	</script>
+	<style type="text/css">
+	#sources { font-size:150%; text-align:center; }
+	#sources img { vertical-align:middle }
+	h2 { margin:0 }
+	section { clear:left; width:420px; margin:1em auto; border:1px solid #333; box-model:padding-box; }
+	section canvas { float:left }
+	caption { font-weight:bold; text-align:left; background:#ccc; padding:0 0.5em; height:20px; line-height:20px; }
+	table { height:120px; width:140px }
+	th { text-align:left; opacity:0.4 }
+	td { text-align:right }
+	th,td { vertical-align:bottom }
+	</style>
+</head><body>
+<h1 id="sources">
+Blending
+<img id="over"  src="over.png">
+over
+<img id="under" src="under.png">
+</h1>
+</body></html>
