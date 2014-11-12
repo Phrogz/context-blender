@@ -1,13 +1,13 @@
-Mode: normal      Time: 1.00  Delta:   817705
-Mode: screen      Time: 1.00  Delta:   842371
-Mode: multiply    Time: 1.14  Delta:   883147
-Mode: difference  Time: 1.26  Delta:   949969
-Mode: src-in      Time: 1.08  Delta:  4689117
-Mode: add         Time: 1.27  Delta:   825776
-Mode: overlay     Time: 1.11  Delta:  2074844
-Mode: hardlight   Time: 1.13  Delta:  3059525
-Mode: colordodge  Time: 1.33  Delta:  3220876
-Mode: colorburn   Time: 1.27  Delta:  5645315
-Mode: darken      Time: 1.12  Delta:  4172126
-Mode: lighten     Time: 1.08  Delta:  1279800
-Mode: exclusion   Time: 0.27  Delta:    39295
+normal         wrong:  0%   delta:     491   time:  7.6ms
+screen         wrong:  0%   delta:      73   time:  8.7ms
+multiply       wrong:  0%   delta:     678   time:  8.8ms
+difference     wrong:  0%   delta:      90   time: 10.3ms
+src-in         wrong:  0%   delta:       0   time:  9.7ms
+add            wrong: 73%   delta:  328600   time: 10.4ms
+overlay        wrong: 80%   delta:  605576   time:  8.8ms
+hardlight      wrong: 86%   delta: 1140421   time:  8.9ms
+colordodge     wrong: 85%   delta: 1042671   time: 10.6ms
+colorburn      wrong: 90%   delta: 2536552   time: 10.3ms
+darken         wrong: 88%   delta: 1746602   time:  7.9ms
+lighten        wrong: 69%   delta:  479036   time:  4.3ms
+exclusion      wrong:  0%   delta:     145   time:  3.7ms
