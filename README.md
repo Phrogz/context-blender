@@ -27,10 +27,31 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 
 ### In Node.js
 
+First:
+
     npm install context-blender
 
 Will install node-canvas, which requires a working Cairo install.
 See https://github.com/Automattic/node-canvas#installation for more details.
+
+Then:
+
+    // Requires the canvas library and augments it for you
+    var Canvas = require('context-blender');
+
+    var over  = new Canvas(100,100).getContext('2d');
+    var under = new Canvas(100,100).getContext('2d');
+
+    // …drawing something to both canvas contexts, and then:
+
+    // Blend all of 'over' onto 'under', starting at the upper left corner
+    over.blendOnto(under,'screen');
+
+    // Blend all of 'over' onto 'under' (again), starting at 17,42 in 'under'
+    over.blendOnto(under,'multiply',{destX:17,destY:42});
+
+    // Blend a 16x16 tile from 'over' onto 'under' (again), starting at 17,42 in 'under'
+    over.blendOnto(under,'add',{destX:17,destY:42,sourceX:32,sourceY:128,width:16,height:16});
 
 ### In a Web Browser
 
