@@ -25,6 +25,15 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 
 ## Use
 
+### In Node.js
+
+    npm install context-blender
+
+Will install node-canvas, which requires a working Cairo install.
+See https://github.com/Automattic/node-canvas#installation for more details.
+
+### In a Web Browser
+
     // Likely an 'offscreen' (not in the DOM) canvas
     var over = someCanvas.getContext('2d');
 
@@ -46,42 +55,31 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 The following blend modes work perfectly (or as nearly as the [vagaries of the HTML Canvas](http://stackoverflow.com/questions/4309364/why-does-html-canvas-getimagedata-not-return-the-exact-same-values-that-were-ju) allow):
 
  * `normal` (or `src-over`)
+ * `src-in`
  * `screen`
  * `multiply`
  * `difference`
+ * `exclusion`
 
-These blend modes mostly work as intended, but have issues when it comes to dealing with the alpha channel:
-
- * `exclusion` - very subtle color differences (slightly too bright) under limited circumstances.
-
- * `src-in` - the output of this blend mode is slightly different from the effect
-   of applying the transparency of one layer as a mask to another; the difference only appears
-   in low-opacity areas, however.
-     * ![comparison of result versus intended for src-in blend mode](http://phrogz.net/tmp/context-blender_src-in.png)
+The following additional blend modes mostly work as intended, but have issues when it comes to dealing with the alpha channel:
 
  * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
    on the opacities of the two layers. I have not yet figured out what it does instead.
    For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
-   * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_add.png)
-
  * `lighten` (or `lighter`) - the result is _slightly_ too dark when the opacity falls and incorrectly 'favors' a higher-opacity source.
-     * ![comparison of result versus intended for lighten blend mode](http://phrogz.net/tmp/context-blender_lighten.png)
-
  * `darken` (or `darker`) - the result is too dark when combining low-opacity regions, and does not properly 'favor' the higher-opacity source.
-     * ![comparison of result versus intended for darken blend mode](http://phrogz.net/tmp/context-blender_darken.png)
-
  * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha
    of either/both images, the more the colors get clamped, resulting in high contrast.
-   * ![comparison of result versus intended for add blend mode](http://phrogz.net/tmp/context-blender_overlay.png)
-
  * `hardlight` - this is the opposite of "overlay" and experiences similar problems when either image is not fully opaque.
-   * ![comparison of result versus intended for hard light blend mode](http://phrogz.net/tmp/context-blender_hardlight.png)
-
  * `colordodge` (or `dodge`) - works correctly only under 100% opacity
-     * ![comparison of result versus intended for dodge blend mode](http://phrogz.net/tmp/context-blender_dodge.png)
-
  * `colorburn` (or `burn`) - works correctly only under 100% opacity
-     * ![comparison of result versus intended for burn blend mode](http://phrogz.net/tmp/context-blender_burn.png)
+ * `softlight`
+ * `luminosity`
+ * `color`
+ * `hue`
+ * `saturation`
+ * `lightercolor`
+ * `darkercolor`
 
 ## Requirements/Browser Support
 
