@@ -11,10 +11,10 @@
   "bugs": "http://github.com/Phrogz/context-blender/issues",
   "license" : "MIT",
   "dependencies": {
-    "canvas": "~1.1",
+    "canvas": "~1.1"
   },
   "devDependencies": {
-    "sprintf": "~0.1",
+    "sprintf": "~0.1"
   },
   "readmeFilename": "README.md",
   "keywords": [
@@ -45,6 +45,6 @@
     "hue",
     "saturation",
     "lightercolor",
-    "darkercolor",
+    "darkercolor"
   ]
 }
