@@ -87,6 +87,7 @@ Should work on any user agent that supplies a `CanvasRenderingContext2D` along w
 
 This includes using the [`node-canvas`](https://github.com/Automattic/node-canvas) library under [Node.js](http://nodejs.org).
 
+
 ## About
 
 This library was created around the need solely for a one-off 'screen' blend mode to match the company-mandated style for bar graphs used internally, previously only available via a Microsoft® Excel® template. Clearly this functionality is useful in more contexts than just my one-off, so I decided to make a framework around it and encourage others to help figure out the formulae. Please, fork this project, add blend modes and/or fix math, and send me pull requests! I feel certain that the resources must exist out there on the equations Photoshop uses in the presence of alpha, but so far I have not found them.
@@ -120,21 +121,15 @@ _Great thanks to [Pixelero](http://pixelero.wordpress.com) for amazing contribut
 - Known broken: `overlay`, `dodge`
 
 ## Reference Material
-[PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF
-[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
-[Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post
-[Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post
+* [PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF
+* [SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
+* [Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post
+* [Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post
+
+### Contact
+
+To report bugs or request additional features, please use the [Context-Blender Issues](http://github.com/Phrogz/context-blender/issues) page for this project.
 
 ### License
 
 This library is released under an MIT-style license. That generally means that you are free to do almost anything you want with it as long as you give a bit of credit where credit is due. See the LICENSE file included for the actual legal limitations.s and/or fix math, and send me pull requests! I feel certain that the resources must exist out there on the equations Photoshop uses in the presence of alpha, but so far I have not found them.
-
-## Reference Material
-[PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF
-[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
-[Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post
-[Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post
-
-### License
-
-This library is released under an MIT-style license. That generally means that you are free to do almost anything you want with it as long as you give a bit of credit where credit is due. See the LICENSE file included for the actual legal limitations.
