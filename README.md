@@ -11,14 +11,14 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
       - offsetOptions : [optional] JS Object with some/all of the following keys:
           destX, destY
           The X/Y location in the 'underContext' to blend onto; both default to 0.
-          
+
           sourceX, sourceY
           The X/Y location in the 'overContext' to blend from; both default to 0.
-          
+
           width,height
           The size of the box to blend; both default to 'auto', blending up to the
           right and bottom edges of the 'over' context.
-          
+
           Width and height may less than specified if there is not enough space
           on the over or under contexts to fit the blend.
 
@@ -26,17 +26,17 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 ## Use
 
     // Likely an 'offscreen' (not in the DOM) canvas
-    var over = someCanvas.getContext('2d'); 
-    
+    var over = someCanvas.getContext('2d');
+
     // Usually a canvas that is shown on the page
     var under = anotherCanvas.getContext('2d');
-    
+
     // Blend all of 'over' onto 'under', starting at the upper left corner
     over.blendOnto(under,'screen');
-    
+
     // Blend all of 'over' onto 'under' (again), starting at 17,42 in 'under'
     over.blendOnto(under,'multiply',{destX:17,destY:42});
-    
+
     // Blend a 16x16 tile from 'over' onto 'under' (again), starting at 17,42 in 'under'
     over.blendOnto(under,'add',{destX:17,destY:42,sourceX:32,sourceY:128,width:16,height:16});
 
@@ -46,7 +46,7 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 The following blend modes work perfectly (or as nearly as the [vagaries of the HTML Canvas](http://stackoverflow.com/questions/4309364/why-does-html-canvas-getimagedata-not-return-the-exact-same-values-that-were-ju) allow):
 
  * `normal` (or `src-over`)
- * `screen` 
+ * `screen`
  * `multiply`
  * `difference`
 
@@ -85,18 +85,57 @@ These blend modes mostly work as intended, but have issues when it comes to deal
 
 ## Requirements/Browser Support
 
-Tested on Safari v5.0, Chrome v8, and FF v3.6. Should work on any user agent that supplies a
-`CanvasRenderingContext2D` along with `getImageData` and `putImageData`.
+Should work on any user agent that supplies a `CanvasRenderingContext2D` along with `getImageData` and `putImageData`.
+
+This includes using the [`node-canvas`](https://github.com/Automattic/node-canvas) library under [Node.js](http://nodejs.org).
 
 ## About
 
 This library was created around the need solely for a one-off 'screen' blend mode to match the company-mandated style for bar graphs used internally, previously only available via a Microsoft® Excel® template. Clearly this functionality is useful in more contexts than just my one-off, so I decided to make a framework around it and encourage others to help figure out the formulae. Please, fork this project, add blend modes and/or fix math, and send me pull requests! I feel certain that the resources must exist out there on the equations Photoshop uses in the presence of alpha, but so far I have not found them.
 
+### History
+
+#### v1.3.0 - 2014-Nov-12
++ Release as a Node.js module.
++ Add blend modes: `softlight`, `luminosity`, `color`, `hue`, `saturation`, `lightercolor`, `darkercolor`.
++ Greatly improve the accuracy of many blend modes.
+
+_Great thanks to [Pixelero](http://pixelero.wordpress.com) for amazing contributions!_
+
+#### v1.2.1 - 2011-Feb-9
++ Improve perf of `lighten` and `darken` blend modes.
+
+#### v1.2.0 - 2010-Dec-14
++ Add blend modes: `hardlight`, `colordodge`, `colorburn`, `darken`, `lighten`, `exclusion`. _Thanks [gingerbeardman](https://github.com/gingerbeardman)!_
+
+#### v1.1.1 - 2010-Dec-12
++ Improve result of `overlay` blend mode.
+
+#### v1.1.0 - 2010-Dec-6
++ Added array `blendOnto.supportedBlendModes` for enumerating modes.
++ Added object `blendOnto.supports` for testing if a mode is supported.
++ Test for `getImageData()` to be present (prevent loading on excanvas).
+
+#### v1.0 - 2010-Nov-30
++ Initial working release.
++ Supported blend modes: `normal`, `screen`, `multiply`, `difference`, `src-in`, `add`
+- Known broken: `overlay`, `dodge`
+
 ## Reference Material
-[PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF  
-[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)  
-[Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post  
-[Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post  
+[PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF
+[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
+[Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post
+[Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post
+
+### License
+
+This library is released under an MIT-style license. That generally means that you are free to do almost anything you want with it as long as you give a bit of credit where credit is due. See the LICENSE file included for the actual legal limitations.s and/or fix math, and send me pull requests! I feel certain that the resources must exist out there on the equations Photoshop uses in the presence of alpha, but so far I have not found them.
+
+## Reference Material
+[PDF Blend Modes: Addendum (January 23, 2006)](http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/blend_modes.pdf) PDF
+[SVG Compositing 1.2, Part 1: Primer](http://dev.w3.org/SVG/modules/compositing/master/SVGCompositingPrimer.html)
+[Custom blend modes for Flash 10](http://www.lostinactionscript.com/blog/index.php/2009/05/26/custom-blend-modes-for-flash-10/) blog post
+[Blend Modes in Delphi](http://www.pegtop.net/delphi/articles/blendmodes/) blog post
 
 ### License
 
