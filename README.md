@@ -115,6 +115,9 @@ This library was created around the need solely for a one-off 'screen' blend mod
 
 ### History
 
+#### v1.3.3 - 2014-Nov-13
++ Fix alpha on all blend modes to exactly match Photoshop.
+
 #### v1.3.0 - 2014-Nov-12
 + Release as a Node.js module.
 + Add blend modes: `softlight`, `luminosity`, `color`, `hue`, `saturation`, `lightercolor`, `darkercolor`.

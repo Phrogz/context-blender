@@ -47,14 +47,13 @@ function blendOnto(destContext,blendMode,offsetOptions){
 		var sRA, sGA, sBA, dRA, dGA, dBA, dA2,
 			r1,g1,b1, r2,g2,b2;
 		var demultiply;
-		
+
 		function Fsoftlight(a,b) {
 			/*
-			 http://en.wikipedia.org/wiki/Blend_modes#Soft_Light
-			 
-			 2ab+a^2 (1-2b), if b<0.5
-			 2a(1-b) +sqrt(a)(2b-1), otherwise
-			 */
+				http://en.wikipedia.org/wiki/Blend_modes#Soft_Light
+				2ab+a^2 (1-2b), if b<0.5
+				2a(1-b) +sqrt(a)(2b-1), otherwise
+			*/
 			var b2=b<<1;
 			if (b<128) {
 				return (a*(b2+(a*(255-b2)>>8)))>>8;
@@ -72,70 +71,70 @@ function blendOnto(destContext,blendMode,offsetOptions){
 		function Fdodge(a,b) {
 			return (b==255 && a==0) ? 255 : Math.min(255,(a<<8)/(255-b));
 		}
-		
+
 		function Fburn(a,b) {
 			return (b==255 && a==0) ? 0 : 255-Math.min(255,((255-a)<<8)/b);
 		}
-		
-		
+
+
 		/*
-		 // yyy = similar to YCbCr
-		 0.2990    0.5870    0.1140
-		 -0.1687   -0.3313    0.5000
-		 0.5000   -0.4187   -0.0813
-		 */
+			// yyy = similar to YCbCr
+			0.2990    0.5870    0.1140
+			-0.1687   -0.3313    0.5000
+			0.5000   -0.4187   -0.0813
+		*/
 		function rgb2YCbCr(r,g,b) {
 			return { r: 0.2990*r+0.5870*g+0.1140*b,
 					g: -0.1687*r-0.3313*g+0.5000*b,
 				b: 0.5000*r-0.4187*g-0.0813*b};
 		}
-		
+
 		/*
-		 1.0000   -0.0000    1.4020
-		 1.0000   -0.3441   -0.7141
-		 1.0000    1.7720    0.0000
-		 */
+			1.0000   -0.0000    1.4020
+			1.0000   -0.3441   -0.7141
+			1.0000    1.7720    0.0000
+		*/
 		function YCbCr2rgb(r,g,b) {
 			return { r: r +1.4020*b,
 			g: r-0.3441*g   -0.7141*b,
 				b: r+1.7720*g};
 		}
-		
+
 		function rgb2hsv(r,g,b) {
 			var c=rgb2YCbCr(r,g,b);
 			var s=Math.sqrt(c.g*c.g+c.b*c.b),
 				h=Math.atan2(c.g,c.b);
 			return {h:h, s:s, v:c.r };
 		}
-		
+
 		function hsv2rgb(h,s,v) {
 			var g=s*Math.sin(h),
 				b=s*Math.cos(h);
 			return YCbCr2rgb(v,g,b);
 		}
-		
-		
+
+
 		for (var px=0;px<len;px+=4){
 			sA  = src[px+3]/255;
 			dA  = dst[px+3]/255;
 			dA2 = (sA + dA - sA*dA);
 			dst[px+3] = dA2*255;
-			
+
 			r1=dst[px], g1=dst[px+1], b1=dst[px+2];
 			r2=src[px], g2=src[px+1], b2=src[px+2];
-			
+
 			sRA = r2/255*sA;
 			dRA = r1/255*dA;
 			sGA = g2/255*sA;
 			dGA = g1/255*dA;
 			sBA = b2/255*sA;
 			dBA = b1/255*dA;
-			
+
 			demultiply = 255 / dA2;
-		
+
 			// var f1=dA*sA, f2=dA*(1-sA), f3=(1-dA)*sA;
 			var f1=dA*sA, f2=dA-f1, f3=sA-f1;
-			
+
 			switch(blendMode){
 				// ******* Very close match to Photoshop
 				case 'normal':
@@ -144,7 +143,7 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px+1] = (sGA + dGA - dGA*sA) * demultiply;
 					dst[px+2] = (sBA + dBA - dBA*sA) * demultiply;
 				break;
-				
+
 				case 'screen':
 					dst[px  ] = (sRA + dRA - sRA*dRA) * demultiply;
 					dst[px+1] = (sGA + dGA - sGA*dGA) * demultiply;
@@ -167,18 +166,15 @@ function blendOnto(destContext,blendMode,offsetOptions){
 				case 'src-in':
 					dA2 = sA*dA;
 					demultiply = 255 / dA2;
-					dst[px+3] = dA2*255;
 					dst[px  ] = sRA*dA * demultiply;
 					dst[px+1] = sGA*dA * demultiply;
 					dst[px+2] = sBA*dA * demultiply;
+					dst[px+3] = dA2*255;
 				break;
 
 				case 'plus':
 				case 'add':
 					// Photoshop doesn't simply add the alpha channels; this might be correct wrt SVG 1.2
-					dA2 = Math.min(1,sA+dA);
-					dst[px+3] = dA2*255;
-					demultiply = 255 / dA2;
 					dst[px  ] = Math.min(sRA + dRA,1) * demultiply;
 					dst[px+1] = Math.min(sGA + dGA,1) * demultiply;
 					dst[px+2] = Math.min(sBA + dBA,1) * demultiply;
@@ -188,41 +184,36 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px]   = f1*Foverlay(r1,r2) + f2*r1 + f3*r2;
 					dst[px+1] = f1*Foverlay(g1,g2) + f2*g1 + f3*g2;
 					dst[px+2] = f1*Foverlay(b1,b2) + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-								
+
 				case 'hardlight':
 					//  hardlight(a,b) = overlay(b,a)
 					dst[px]   = f1*Foverlay(r2,r1) + f2*r1 + f3*r2;
 					dst[px+1] = f1*Foverlay(g2,g1) + f2*g1 + f3*g2;
 					dst[px+2] = f1*Foverlay(b2,b1) + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-				
+
 				case 'colordodge':
 				case 'dodge':
 					dst[px]   = f1*Fdodge(r1,r2) + f2*r1 + f3*r2;
 					dst[px+1] = f1*Fdodge(g1,g2) + f2*g1 + f3*g2;
 					dst[px+2] = f1*Fdodge(b1,b2) + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-				
+
 				case 'colorburn':
 				case 'burn':
 					dst[px]   = f1*Fburn(r1,r2) + f2*r1 + f3*r2;
 					dst[px+1] = f1*Fburn(g1,g2) + f2*g1 + f3*g2;
-			   		dst[px+2] = f1*Fburn(b1,b2) + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
+					dst[px+2] = f1*Fburn(b1,b2) + f2*b1 + f3*b2;
 				break;
-				
+
 				case 'darken':
 				case 'darker':
 					dst[px]   = f1*(r1<r2 ? r1 : r2) + f2*r1 + f3*r2;
 					dst[px+1] = f1*(g1<g2 ? g1 : g2) + f2*g1 + f3*g2;
-			   		dst[px+2] = f1*(b1<b2 ? b1 : b2) + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
+					dst[px+2] = f1*(b1<b2 ? b1 : b2) + f2*b1 + f3*b2;
 				break;
-				
+
 				case 'lighten':
 				case 'lighter':
 					dst[px  ] = (sRA<dRA ? dRA : sRA) * demultiply;
@@ -238,11 +229,10 @@ function blendOnto(destContext,blendMode,offsetOptions){
 
 				case 'softlight':
 					dst[px]   = f1*Fsoftlight(r1,r2) + f2*r1 + f3*r2;
-				  dst[px+1] = f1*Fsoftlight(g1,g2) + f2*g1 + f3*g2;
-				  dst[px+2] = f1*Fsoftlight(b1,b2) + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
+					dst[px+1] = f1*Fsoftlight(g1,g2) + f2*g1 + f3*g2;
+					dst[px+2] = f1*Fsoftlight(b1,b2) + f2*b1 + f3*b2;
 				break;
-				
+
 				case 'luminosity':
 					var hsl  = rgb2YCbCr(r1,g1,b1);
 					var hsl2 = rgb2YCbCr(r2,g2,b2);
@@ -250,9 +240,8 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px]   = f1*rgb.r + f2*r1 + f3*r2;
 					dst[px+1] = f1*rgb.g + f2*g1 + f3*g2;
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-				
+
 				case 'color':
 					var hsl  = rgb2YCbCr(r1,g1,b1);
 					var hsl2 = rgb2YCbCr(r2,g2,b2);
@@ -260,9 +249,8 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px]   = f1*rgb.r + f2*r1 + f3*r2;
 					dst[px+1] = f1*rgb.g + f2*g1 + f3*g2;
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-					
+
 				case 'hue':
 					var hsl =rgb2hsv(r1,g1,b1);
 					var hsl2=rgb2hsv(r2,g2,b2);
@@ -270,7 +258,6 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px]   = f1*rgb.r + f2*r1 + f3*r2;
 					dst[px+1] = f1*rgb.g + f2*g1 + f3*g2;
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
 
 				case 'saturation':
@@ -280,7 +267,6 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px]   = f1*rgb.r + f2*r1 + f3*r2;
 					dst[px+1] = f1*rgb.g + f2*g1 + f3*g2;
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
 
 				case 'lightercolor':
@@ -288,17 +274,15 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px]   = f1*rgb.r + f2*r1 + f3*r2;
 					dst[px+1] = f1*rgb.g + f2*g1 + f3*g2;
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-					
+
 				case 'darkercolor':
-					var rgb = 2.623*(r1-r2)+5.15*(g1-g2)+b1-b2<0 ? {r:r1,g:g1,b:b1} : {r:r2,g:g2,b:b2};					
+					var rgb = 2.623*(r1-r2)+5.15*(g1-g2)+b1-b2<0 ? {r:r1,g:g1,b:b1} : {r:r2,g:g2,b:b2};
 					dst[px]   = f1*rgb.r + f2*r1 + f3*r2;
 					dst[px+1] = f1*rgb.g + f2*g1 + f3*g2;
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
-					dst[px+3] = f1*255 + f2*dst[px+3] + f3*src[px+3];
 				break;
-					
+
 				// ******* UNSUPPORTED mode, gives yellow/magenta stripes
 				default:
 					dst[px] = dst[px+3] = 255;
