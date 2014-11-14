@@ -82,25 +82,45 @@ The following blend modes work perfectly (or as nearly as the [vagaries of the H
  * `difference`
  * `exclusion`
 
-The following additional blend modes mostly work as intended, but have issues when it comes to dealing with the alpha channel:
+The following additional blend modes mostly work as intended, but have issues when it comes to dealing with low-opacity colors.
+
+Test images are the result of blending
+![](test/over.png)
+over top of
+![](test/under.png)
+(where the "lighter" repetitions are the result of lowered opacity).
 
  * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
    on the opacities of the two layers. I have not yet figured out what it does instead.
    For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/add-ideal.png)</td><td>![](test/add-actual.png)</td></tr></tbody></table>
  * `lighten` (or `lighter`) - the result is _slightly_ too dark when the opacity falls and incorrectly 'favors' a higher-opacity source.
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/lighten-ideal.png)</td><td>![](test/lighten-actual.png)</td></tr></tbody></table>
  * `darken` (or `darker`) - the result is too dark when combining low-opacity regions, and does not properly 'favor' the higher-opacity source.
- * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha
-   of either/both images, the more the colors get clamped, resulting in high contrast.
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/darken-ideal.png)</td><td>![](test/darken-actual.png)</td></tr></tbody></table>
+ * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha of either/both images, the more the colors get clamped, resulting in high contrast.
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/overlay-ideal.png)</td><td>![](test/overlay-actual.png)</td></tr></tbody></table>
  * `hardlight` - this is the opposite of "overlay" and experiences similar problems when either image is not fully opaque.
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/hardlight-ideal.png)</td><td>![](test/hardlight-actual.png)</td></tr></tbody></table>
  * `colordodge` (or `dodge`) - works correctly only under 100% opacity
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/colordodge-ideal.png)</td><td>![](test/colordodge-actual.png)</td></tr></tbody></table>
  * `colorburn` (or `burn`) - works correctly only under 100% opacity
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/colorburn-ideal.png)</td><td>![](test/colorburn-actual.png)</td></tr></tbody></table>
  * `softlight`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/softlight-ideal.png)</td><td>![](test/softlight-actual.png)</td></tr></tbody></table>
  * `luminosity`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/luminosity-ideal.png)</td><td>![](test/luminosity-actual.png)</td></tr></tbody></table>
  * `color`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/color-ideal.png)</td><td>![](test/color-actual.png)</td></tr></tbody></table>
  * `hue`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/hue-ideal.png)</td><td>![](test/hue-actual.png)</td></tr></tbody></table>
  * `saturation`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/saturation-ideal.png)</td><td>![](test/saturation-actual.png)</td></tr></tbody></table>
  * `lightercolor`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/lightercolor-ideal.png)</td><td>![](test/lightercolor-actual.png)</td></tr></tbody></table>
  * `darkercolor`
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/`darkercolor-ideal.png)</td><td>![](test/`darkercolor-actual.png)</td></tr></tbody></table>
+
 
 ## Requirements/Browser Support
 
