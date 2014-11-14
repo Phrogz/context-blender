@@ -27,15 +27,16 @@ Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com
 
 ### In Node.js
 
-First:
+1. Install the node module
 
-    npm install context-blender
+        npm install context-blender
 
-Will install node-canvas, which requires a working Cairo install.
-See https://github.com/Automattic/node-canvas#installation for more details.
+   This will also install node-canvas, which requires a working Cairo install.
+   See https://github.com/Automattic/node-canvas#installation for more details.
 
-Then:
+2. Use the library like so in the scripts:
 
+    ```javascript
     // Requires the canvas library and augments it for you
     var Canvas = require('context-blender');
 
@@ -52,23 +53,26 @@ Then:
 
     // Blend a 16x16 tile from 'over' onto 'under' (again), starting at 17,42 in 'under'
     over.blendOnto(under,'add',{destX:17,destY:42,sourceX:32,sourceY:128,width:16,height:16});
+    ```
 
 ### In a Web Browser
 
-    // Likely an 'offscreen' (not in the DOM) canvas
-    var over = someCanvas.getContext('2d');
+```javascript
+// Likely an 'offscreen' (not in the DOM) canvas
+var over = someCanvas.getContext('2d');
 
-    // Usually a canvas that is shown on the page
-    var under = anotherCanvas.getContext('2d');
+// Usually a canvas that is shown on the page
+var under = anotherCanvas.getContext('2d');
 
-    // Blend all of 'over' onto 'under', starting at the upper left corner
-    over.blendOnto(under,'screen');
+// Blend all of 'over' onto 'under', starting at the upper left corner
+over.blendOnto(under,'screen');
 
-    // Blend all of 'over' onto 'under' (again), starting at 17,42 in 'under'
-    over.blendOnto(under,'multiply',{destX:17,destY:42});
+// Blend all of 'over' onto 'under' (again), starting at 17,42 in 'under'
+over.blendOnto(under,'multiply',{destX:17,destY:42});
 
-    // Blend a 16x16 tile from 'over' onto 'under' (again), starting at 17,42 in 'under'
-    over.blendOnto(under,'add',{destX:17,destY:42,sourceX:32,sourceY:128,width:16,height:16});
+// Blend a 16x16 tile from 'over' onto 'under' (again), starting at 17,42 in 'under'
+over.blendOnto(under,'add',{destX:17,destY:42,sourceX:32,sourceY:128,width:16,height:16});
+```
 
 
 ## Supported Blend Modes
@@ -98,9 +102,9 @@ over top of
    <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/lighten-ideal.png)</td><td>![](test/lighten-actual.png)</td></tr></tbody></table>
  * `darken` (or `darker`) - the result is too dark when combining low-opacity regions, and does not properly 'favor' the higher-opacity source.
    <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/darken-ideal.png)</td><td>![](test/darken-actual.png)</td></tr></tbody></table>
- * `overlay` - this is only correct where both the over and under images are 100% opaque; the lower the alpha of either/both images, the more the colors get clamped, resulting in high contrast.
+ * `overlay` - this is correct where both the over and under images are 100% opaque; the lower the alpha of either/both images, the more the colors become too desaturated.
    <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/overlay-ideal.png)</td><td>![](test/overlay-actual.png)</td></tr></tbody></table>
- * `hardlight` - this is the opposite of "overlay" and experiences similar problems when either image is not fully opaque.
+ * `hardlight` - this is the opposite of "overlay" and experiences similar problems where either image is not fully opaque.
    <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/hardlight-ideal.png)</td><td>![](test/hardlight-actual.png)</td></tr></tbody></table>
  * `colordodge` (or `dodge`) - works correctly only under 100% opacity
    <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/colordodge-ideal.png)</td><td>![](test/colordodge-actual.png)</td></tr></tbody></table>
@@ -119,7 +123,7 @@ over top of
  * `lightercolor`
    <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/lightercolor-ideal.png)</td><td>![](test/lightercolor-actual.png)</td></tr></tbody></table>
  * `darkercolor`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/`darkercolor-ideal.png)</td><td>![](test/`darkercolor-actual.png)</td></tr></tbody></table>
+   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/darkercolor-ideal.png)</td><td>![](test/darkercolor-actual.png)</td></tr></tbody></table>
 
 
 ## Requirements/Browser Support
