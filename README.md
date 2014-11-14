@@ -84,10 +84,10 @@ The following blend modes work perfectly (or as nearly as the [vagaries of the H
 
 The following additional blend modes mostly work as intended, but have issues when it comes to dealing with low-opacity colors.
 
-Test images are the result of blending
-![](test/over.png)
-over top of
-![](test/under.png)
+Test images are the result of blending  
+![](test/over.png)  
+over top of  
+![](test/under.png)  
 (where the "lighter" repetitions are the result of lowered opacity).
 
  * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
