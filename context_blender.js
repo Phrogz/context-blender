@@ -45,7 +45,7 @@ function blendOnto(destContext,blendMode,offsetOptions){
 		var dst  = dstD.data;
 		var sA, dA, len=dst.length;
 		var sRA, sGA, sBA, dRA, dGA, dBA, dA2,
-			r1,g1,b1, r2,g2,b2;
+		    r1,g1,b1, r2,g2,b2;
 		var demultiply;
 
 		function Fsoftlight(a,b) {
@@ -55,11 +55,8 @@ function blendOnto(destContext,blendMode,offsetOptions){
 				2a(1-b) +sqrt(a)(2b-1), otherwise
 			*/
 			var b2=b<<1;
-			if (b<128) {
-				return (a*(b2+(a*(255-b2)>>8)))>>8;
-			} else {
-				return (a*(511-b2)+(Math.sqrt(a<<8)*(b2-255)))>>8;
-			}
+			if (b<128) return (a*(b2+(a*(255-b2)>>8)))>>8;
+			else       return (a*(511-b2)+(Math.sqrt(a<<8)*(b2-255)))>>8;
 		}
 
 		function Foverlay(a,b) {
@@ -84,9 +81,10 @@ function blendOnto(destContext,blendMode,offsetOptions){
 			0.5000   -0.4187   -0.0813
 		*/
 		function rgb2YCbCr(r,g,b) {
-			return { r: 0.2990*r+0.5870*g+0.1140*b,
-					g: -0.1687*r-0.3313*g+0.5000*b,
-				b: 0.5000*r-0.4187*g-0.0813*b};
+			return {
+				r: 0.2990*r+0.5870*g+0.1140*b,
+				g: -0.1687*r-0.3313*g+0.5000*b,
+				b: 0.5000*r-0.4187*g-0.0813*b };
 		}
 
 		/*
@@ -95,21 +93,22 @@ function blendOnto(destContext,blendMode,offsetOptions){
 			1.0000    1.7720    0.0000
 		*/
 		function YCbCr2rgb(r,g,b) {
-			return { r: r +1.4020*b,
-			g: r-0.3441*g   -0.7141*b,
-				b: r+1.7720*g};
+			return {
+				r: r +1.4020*b,
+				g: r-0.3441*g   -0.7141*b,
+				b: r+1.7720*g };
 		}
 
 		function rgb2hsv(r,g,b) {
 			var c=rgb2YCbCr(r,g,b);
 			var s=Math.sqrt(c.g*c.g+c.b*c.b),
-				h=Math.atan2(c.g,c.b);
+			    h=Math.atan2(c.g,c.b);
 			return {h:h, s:s, v:c.r };
 		}
 
 		function hsv2rgb(h,s,v) {
 			var g=s*Math.sin(h),
-				b=s*Math.cos(h);
+			    b=s*Math.cos(h);
 			return YCbCr2rgb(v,g,b);
 		}
 
@@ -132,7 +131,6 @@ function blendOnto(destContext,blendMode,offsetOptions){
 
 			demultiply = 255 / dA2;
 
-			// var f1=dA*sA, f2=dA*(1-sA), f3=(1-dA)*sA;
 			var f1=dA*sA, f2=dA-f1, f3=sA-f1;
 
 			switch(blendMode){
@@ -186,8 +184,7 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px+2] = f1*Foverlay(b1,b2) + f2*b1 + f3*b2;
 				break;
 
-				case 'hardlight':
-					//  hardlight(a,b) = overlay(b,a)
+				case 'hardlight': // hardlight(a,b) = overlay(b,a)
 					dst[px]   = f1*Foverlay(r2,r1) + f2*r1 + f3*r2;
 					dst[px+1] = f1*Foverlay(g2,g1) + f2*g1 + f3*g2;
 					dst[px+2] = f1*Foverlay(b2,b1) + f2*b1 + f3*b2;
@@ -283,11 +280,13 @@ function blendOnto(destContext,blendMode,offsetOptions){
 					dst[px+2] = f1*rgb.b + f2*b1 + f3*b2;
 				break;
 
-				// ******* UNSUPPORTED mode, gives yellow/magenta stripes
-				default:
+				default: // ******* UNSUPPORTED mode, produces yellow/magenta checkerboard
+					var col = (px/4) % this.canvas.width,
+					    row = Math.floor((px/4) / this.canvas.width),
+					    odd = (col%8<4 && row%8<4) || (col%8>3 && row%8>3);
 					dst[px] = dst[px+3] = 255;
-					dst[px+1] = px%8==0 ? 255 : 0;
-					dst[px+2] = px%8==0 ? 0 : 255;
+					dst[px+1] = odd ? 255 : 0;
+					dst[px+2] = odd ? 0 : 255;
 			}
 		}
 		destContext.putImageData(dstD,offsets.destX,offsets.destY);
