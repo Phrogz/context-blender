@@ -97,7 +97,7 @@
 		}
 
 		function distance(ideal,actual){
-			return Math.sqrt( Math.pow(ideal.r-actual.r,2) + Math.pow(ideal.g-actual.g,2), Math.pow(ideal.b-actual.b,2), Math.pow(ideal.a-actual.a,2) ) * (ideal.a/255);
+			return Math.sqrt( Math.pow(ideal.r-actual.r,2) + Math.pow(ideal.g-actual.g,2) + Math.pow(ideal.b-actual.b,2) + Math.pow(ideal.a-actual.a,2) ) * (ideal.a/255);
 		}
 
 		function pxl(imgdata,i){

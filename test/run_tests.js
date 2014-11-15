@@ -6,7 +6,7 @@ var Canvas  = require(__dirname+'/../context_blender'),
     fs      = require('fs');
 
 var ctx = {};
-var blendModes   = Canvas.Context2d.prototype.blendOnto.supportedBlendModes, 
+var blendModes   = Canvas.Context2d.prototype.blendOnto.supportedBlendModes,
     blendAliases = Canvas.Context2d.prototype.blendOnto.aliases;
 
 var testLoops = 10;
@@ -24,7 +24,7 @@ function go(){
 }
 
 function analyze(mode){
-	ctx.ideal.clearRect(0,0,140,140);	
+	ctx.ideal.clearRect(0,0,140,140);
 	drawOntoContext(ctx.ideal, __dirname+'/'+mode+'-ideal.png');
 	var ideal = ctx.ideal.getImageData(0,0,140,140).data;
 
@@ -43,7 +43,7 @@ function analyze(mode){
 }
 
 function distance(ideal,actual){
-	return Math.sqrt( Math.pow(ideal.r-actual.r,2) + Math.pow(ideal.g-actual.g,2), Math.pow(ideal.b-actual.b,2), Math.pow(ideal.a-actual.a,2) ) * (ideal.a/255);
+	return Math.sqrt( Math.pow(ideal.r-actual.r,2) + Math.pow(ideal.g-actual.g,2) + Math.pow(ideal.b-actual.b,2) + Math.pow(ideal.a-actual.a,2) ) * (ideal.a/255);
 }
 
 function pxl(imgdata,i){
