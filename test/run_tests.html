@@ -24,26 +24,32 @@
 			ctx.actual = canvas.getContext('2d');
 			var blendOnto = CanvasRenderingContext2D.prototype.blendOnto;
 
+			var tbody = document.querySelector('tbody');
+
 			$.each(blendOnto.supportedBlendModes,function(){
 				var mode = this+"";
 				if (blendOnto.aliases[mode]) return;
-				var section = $("<section>",{id:mode}).appendTo(document.body);
-				var actual = $("<canvas>",{class:'actual'}).appendTo(section)[0];
-				actual.width = actual.height = 140;
-				actual = actual.getContext('2d');
-
-				var ideal = $("<canvas>",{class:'ideal'}).appendTo(section)[0];
-				ideal.width = ideal.height = 140;
-				ideal = ideal.getContext('2d');
+				var row = $("<tr>",{id:mode}).appendTo(tbody);
+				var head = $('<th>'+mode+'</th>',{"class":'row'}).appendTo(row);
+				var ideal  = addCanvasToRow(row,mode+'-ideal');
+				var actual = addCanvasToRow(row,mode+'-actual');
 				var img = new Image;
 				img.onload = function(){
 					ideal.drawImage(img,0,0);
 					var result = analyze(actual,ideal,mode);
-					showResult(result,section);
+					splitRGBA(actual,ideal,row);
+					showResult(result,row);
 				};
 				img.src = mode+'-ideal.png';
 			});
 		});
+
+		function addCanvasToRow(row,id){
+			var cell = $('<td>').appendTo(row);
+			var canvas = $("<canvas>",{id:id}).appendTo(cell)[0];
+			canvas.width = canvas.height = 140;
+			return canvas.getContext('2d');
+		}
 
 		function analyze(actual,ideal,mode){
 			for (var time=0,i=testLoops;i--;){
@@ -62,11 +68,32 @@
 			return { mode:mode, time:time/testLoops, percentBad:percent, deviation:wrongs.sum() };
 		}
 
-		function showResult(result,section){
-			var t = $("<table><caption>"+result.mode+"</caption></table>").appendTo(section);
-			t.append('<tr><th>Accuracy</th><td>'+Math.round(100-result.percentBad)+'%</td></tr>');
-			t.append('<tr><th>Deviation</th><td>'+Math.round(result.deviation)+'</td></tr>');
-			t.append('<tr><th>Time</th><td>'+result.time.toFixed(1)+'ms</td></tr>');
+		function showResult(result,row){
+			var cell = $('<td>',{"class":'results'}).appendTo(row);
+			cell[0].innerHTML = "<ul>" +
+			'<li><strong>Accuracy<\/strong> <span>'+Math.round(100-result.percentBad)+'%<\/span><\/li>' +
+			'<li><strong>Deviation<\/strong> <span>'+Math.round(result.deviation)+'<\/span><\/li>' +
+			'<li><strong>Calculation<\/strong> <span>'+result.time.toFixed(1)+'ms<\/span><\/li>' +
+			"<\/ul>";
+		}
+
+		function splitRGBA(actual,ideal,row){
+			copy(function(r,g,b,a){ return [r,g,b,255] },'rgb');
+			copy(function(r,g,b,a){ return [a,a,a,255] },'alpha');
+			copy(function(r,g,b,a){ return [r,0,0,255] },'red');
+
+			function copy(f,idsuffix){
+				[ideal,actual].forEach(function(src){
+					var dst  = addCanvasToRow(row,src.canvas.id+"-"+idsuffix);
+					var srcd = src.getImageData(0,0,140,140).data;
+					var dsti = dst.getImageData(0,0,140,140), dstd = dsti.data;
+					for (var px=0;px<srcd.length;px+=4){
+						var pxs = f(srcd[px],srcd[px+1],srcd[px+2],srcd[px+3]);
+						for (var p=4;p--;) dstd[px+p] = pxs[p];
+					}
+					dst.putImageData(dsti,0,0);
+				});
+			}
 		}
 
 		function distance(ideal,actual){
@@ -78,16 +105,24 @@
 		}
 	</script>
 	<style type="text/css">
+	body { background:#ddd; font-family:sans-serif }
 	#sources { font-size:150%; text-align:center; }
 	#sources img { vertical-align:middle }
+	img, canvas { border:1px solid #333 }
 	h2 { margin:0 }
-	section { clear:left; width:420px; margin:1em auto; border:1px solid #333; box-model:padding-box; }
-	section canvas { float:left }
-	caption { font-weight:bold; text-align:left; background:#ccc; padding:0 0.5em; height:20px; line-height:20px; }
-	table { height:120px; width:140px }
-	th { text-align:left; opacity:0.4 }
+	section { clear:left; width:420px; margin:1em auto; border:1px solid #333; box-model:padding-box }
+	table { height:100px; border-collapse:collapse; margin:2em auto; }
 	td { text-align:right }
-	th,td { vertical-align:bottom }
+	th.row { vertical-align:top }
+	th,td { vertical-align:middle; padding:1px }
+	thead th:nth-child(odd), tbody th.row, td:nth-child(odd) { padding-right:1em }
+	tbody th, tbody td { padding-bottom:2em; }
+	tbody th { text-align:right; font-size:115%; padding-right:0.5em; }
+	.results ul { display:table; font-size:80%; margin:0; padding:0; }
+	.results li { display:table-row; margin:0; padding:0; }
+	.results li > * { display:table-cell }
+	.results li strong { text-align:left; padding:0 }
+	.results li span { padding-left:1em }
 	</style>
 </head><body>
 <h1 id="sources">
@@ -96,4 +131,16 @@ Blending
 over
 <img id="under" src="under.png">
 </h1>
+<table><thead><tr>
+	<th></th>
+	<th>Ideal RGBA</th>
+	<th>Actual RGBA</th>
+	<th>Ideal RGB</th>
+	<th>Actual RGB</th>
+	<th>Ideal Alpha</th>
+	<th>Actual Alpha</th>
+	<th>Ideal Red</th>
+	<th>Actual Red</th>
+	<th>Stats</th>
+</tr></thead><tbody></tbody></table>
 </body></html>
