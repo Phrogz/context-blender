@@ -1,6 +1,6 @@
 ## About
 
-Adobe® Photoshop® has a variety of helpful [blend modes](http://help.adobe.com/en_US/Photoshop/11.0/WSfd1234e1c4b69f30ea53e41001031ab64-77e9a.html) for compositing images from multiple RGBA layers. This small library provides the same functionality for HTML Canvas Contexts, with the goal of producing the same results as Photoshop.
+Adobe® Photoshop® has a variety of helpful [blend modes](http://helpx.adobe.com/photoshop/using/blending-modes.html) for compositing images from multiple RGBA layers. This small library provides the same functionality for HTML Canvas Contexts, with the goal of producing the same results as Photoshop.
 
 ## Syntax
 
