@@ -96,34 +96,77 @@ over top of
 
  * `add` (or `plus`) - Photoshop's _"Linear Dodge (add)"_ blend mode [does not perform addition](http://www.neilblevins.com/cg_education/additive_mode_in_photoshop/additive_mode_in_photoshop.htm)
    on the opacities of the two layers. I have not yet figured out what it does instead.
-   For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode.
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/add-ideal.png)</td><td>![](test/add-actual.png)</td></tr></tbody></table>
+   For now, this mode performs simple numeric addition, the same as the SVG 1.2 "plus" mode. 
+     
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/add-ideal.png) | ![](test/add-actual.png) |
  * `lighten` (or `lighter`) - the result is _slightly_ too dark when the opacity falls and incorrectly 'favors' a higher-opacity source.
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/lighten-ideal.png)</td><td>![](test/lighten-actual.png)</td></tr></tbody></table>
+
+   | Photoshop | context-blender |
+   | --- | --- |
+   | ![](test/lighten-ideal.png) | ![](test/lighten-actual.png) |
  * `darken` (or `darker`) - the result is too dark when combining low-opacity regions, and does not properly 'favor' the higher-opacity source.
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/darken-ideal.png)</td><td>![](test/darken-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/darken-ideal.png) | ![](test/darken-actual.png) |
  * `overlay` - this is correct where both the over and under images are 100% opaque; the lower the alpha of either/both images, the more the colors become too desaturated.
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/overlay-ideal.png)</td><td>![](test/overlay-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/overlay-ideal.png) | ![](test/overlay-actual.png) |
  * `hardlight` - this is the opposite of "overlay" and experiences similar problems where either image is not fully opaque.
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/hardlight-ideal.png)</td><td>![](test/hardlight-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/hardlight-ideal.png) | ![](test/hardlight-actual.png) |
  * `colordodge` (or `dodge`) - works correctly only under 100% opacity
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/colordodge-ideal.png)</td><td>![](test/colordodge-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/colordodge-ideal.png) | ![](test/colordodge-actual.png) |
  * `colorburn` (or `burn`) - works correctly only under 100% opacity
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/colorburn-ideal.png)</td><td>![](test/colorburn-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/colorburn-ideal.png) | ![](test/colorburn-actual.png) |
  * `softlight`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/softlight-ideal.png)</td><td>![](test/softlight-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/softlight-ideal.png) | ![](test/softlight-actual.png) |
  * `luminosity`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/luminosity-ideal.png)</td><td>![](test/luminosity-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/luminosity-ideal.png) | ![](test/luminosity-actual.png) |
  * `color`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/color-ideal.png)</td><td>![](test/color-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/color-ideal.png) | ![](test/color-actual.png) |
  * `hue`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/hue-ideal.png)</td><td>![](test/hue-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/hue-ideal.png) | ![](test/hue-actual.png) |
  * `saturation`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/saturation-ideal.png)</td><td>![](test/saturation-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/saturation-ideal.png) | ![](test/saturation-actual.png) |
  * `lightercolor`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/lightercolor-ideal.png)</td><td>![](test/lightercolor-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/lightercolor-ideal.png) | ![](test/lightercolor-actual.png) |
  * `darkercolor`
-   <table><thead><tr><th>Photoshop</th><th>context-blender</th></tr></thead><tbody><tr><td>![](test/darkercolor-ideal.png)</td><td>![](test/darkercolor-actual.png)</td></tr></tbody></table>
+
+	| Photoshop | context-blender |
+	| --- | --- |
+	| ![](test/darkercolor-ideal.png) | ![](test/darkercolor-actual.png) |
+
 
 
 ## Requirements/Browser Support
