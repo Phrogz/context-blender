@@ -11,7 +11,7 @@
   "bugs": "http://github.com/Phrogz/context-blender/issues",
   "license" : "MIT",
   "dependencies": {
-    "canvas": "~1.4"
+    "canvas": "~1.x"
   },
   "devDependencies": {
     "sprintf": "~0.1"
